@@ -18,6 +18,9 @@ public:
     ~MainWindow() override;
 
 private:
+    QSplitter *splitter = new QSplitter();
+    QListView *listview = new QListView;
+    QListView *listview2 = new QListView;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

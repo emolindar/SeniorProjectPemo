@@ -5,6 +5,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    splitter->addWidget(listview);
+    splitter->addWidget(listview2);
+    w.setCentralWidget(splitter);
     ui->setupUi(this);
 }
 
