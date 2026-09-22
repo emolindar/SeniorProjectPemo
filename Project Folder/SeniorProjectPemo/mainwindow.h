@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QSplitter>
 #include <QListView>
+#include <QLabel>
+#include <QPixmap>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,7 +24,7 @@ public:
 private:
     QSplitter *splitter = new QSplitter();
     QListView *listview = new QListView;
-    QListView *listview2 = new QListView;
+    QLabel *image_viewer = new QLabel;
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

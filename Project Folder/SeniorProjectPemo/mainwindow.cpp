@@ -5,10 +5,12 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    QPixmap pix("/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg");
+    image_viewer->setPixmap(pix);
+    splitter->addWidget(image_viewer);
     splitter->addWidget(listview);
-    splitter->addWidget(listview2);
     setCentralWidget(splitter);
-    ui->setupUi(this);
+//ui->setupUi(this);
 }
 
 MainWindow::~MainWindow()
