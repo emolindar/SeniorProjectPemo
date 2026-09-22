@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     splitter->addWidget(listview);
     splitter->addWidget(listview2);
-    w.setCentralWidget(splitter);
+    setCentralWidget(splitter);
     ui->setupUi(this);
 }
 
