@@ -9,7 +9,7 @@ Image QtoImage(const QImage& img){
     for(int i=0; i<img.width();i++){
         for(int j=0; j<img.height(); j++){
             QColor colors = img.pixelColor(i,j);
-            result.image_data()[i][j].setPixel(colors.redF(), colors.greenF(), colors.blueF());
+            result.setPixel(i,j, Pixel(colors.redF(), colors.greenF(), colors.blueF()));
         }
     }
 

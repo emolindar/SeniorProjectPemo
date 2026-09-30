@@ -32,20 +32,17 @@ private:
 class Image{
 public:
 	Image(int width,int height) : width_(width), height_(height) {
-		for(int i=0; i<width; i++){
-			image_data_.emplace_back();
-			for(int j=0; j<height; j++){
-				image_data_.emplace_back();
-			}
-		}
+		image_data_.resize(width, vector<Pixel>(height, Pixel(0,0,0)));
 	}
-	const int width(){return width_;}
-	const int height(){return height_;}
+	int width() const {return width_;}
+	int height() const {return height_;}
 	vector<vector<Pixel>> image_data(){return image_data_;}
-	Pixel getPixel(int r, int c){
+	Pixel getPixel(int r, int c) const {
 		return image_data_[r][c];
 	}
-
+	void setPixel(int r, int c, Pixel p){
+		image_data_[r][c] = p;
+	}
 private: 
 	int width_ = 0;
 	int height_ =0;
