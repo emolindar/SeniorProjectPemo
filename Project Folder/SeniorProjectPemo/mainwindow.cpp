@@ -1,12 +1,29 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include <iostream>
+#include "src/Image.h"
+#include "src/imageconverter.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    QPixmap pix("/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg");
-    image_viewer->setPixmap(pix);
+
+    QString path = "/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg";
+    QImage loaded(path);
+    if(loaded.isNull()){
+        std::cout << "Error" << std::endl;
+        return; 
+    }
+
+    Image img = QtoImage(loaded);
+    QImage img_output = ImagetoQ(img);
+    image_viewer->setPixmap(QPixmap::fromImage(img_output));
+    
+
+
+    //QPixmap pix("/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg");
+    //image_viewer->setPixmap(pix);
     splitter->addWidget(image_viewer);
     splitter->addWidget(listview);
     setCentralWidget(splitter);

@@ -23,9 +23,9 @@ QImage ImagetoQ(const Image& img){
         for(int j=0; j<img.height(); j++){
             Pixel pixel = img.getPixel(i,j);
             QColor color = QColor::fromRgbF(
-                std::clamp(pixel.red(), 0, 1),
-                std::clamp(pixel.green(), 0, 1),
-                std::clamp(pixel.blue(), 0, 1)
+                std::clamp(pixel.red(), 0.0f, 1.0f),
+                std::clamp(pixel.green(), 0.0f, 1.0f),
+                std::clamp(pixel.blue(), 0.0f, 1.0f)
             );
             result.setPixelColor(i,j,color);    
         }

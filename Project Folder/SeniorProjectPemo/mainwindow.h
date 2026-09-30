@@ -6,6 +6,7 @@
 #include <QListView>
 #include <QLabel>
 #include <QPixmap>
+#include <QImage>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

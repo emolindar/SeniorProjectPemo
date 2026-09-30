@@ -17,7 +17,16 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        src/Image.h
+        src/Image.cpp
+        src/imageconverter.h
+        src/imageconverter.cpp
 )
+# CHANGED: added Image.h, imageconverter.h, imageconverter.cpp above.
+# This list is shared by both the Qt6 and Qt5/Android branches below,
+# so adding them here (instead of only in the Android else-branch, where
+# imageconverter.h alone used to sit) guarantees they're compiled
+# regardless of which Qt version you're building against.
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(SeniorProjectPemo
@@ -39,6 +48,8 @@ else()
         add_executable(SeniorProjectPemo
             ${PROJECT_SOURCES}
         )
+        # CHANGED: removed the extra "imageconverter.h" that was here —
+        # it's now covered by PROJECT_SOURCES above, no need to list it twice.
     endif()
 endif()
 
