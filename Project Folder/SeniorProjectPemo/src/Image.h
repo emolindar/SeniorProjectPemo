@@ -41,12 +41,15 @@ public:
 	}
 	const int width(){return width_;}
 	const int height(){return height_;}
-	vector<Pixel> image_data(){return image_data_;}
+	vector<vector<Pixel>> image_data(){return image_data_;}
+	Pixel getPixel(int r, int c){
+		return image_data_[r][c];
+	}
 
 private: 
 	int width_ = 0;
 	int height_ =0;
-	vector<Pixel> image_data_;
+	vector<vector<Pixel>> image_data_;
 };
 
 
