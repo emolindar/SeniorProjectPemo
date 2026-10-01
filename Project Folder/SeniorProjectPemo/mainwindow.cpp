@@ -11,6 +11,7 @@
 3. start working on the image version graph
 4. add a refresh function, which refreshes the image every time a change is made ( i.e. the slider is moved)
 5. add a way to export the image at the end
+6. start thinking about optimizing all the functions, most just have a O(n^2)
 */
 
 
