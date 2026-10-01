@@ -17,6 +17,11 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     Image img = QtoImage(loaded);
+
+    //testing exposure
+    exposure(img, 2.0f);
+
+
     QImage img_output = ImagetoQ(img);
     image_viewer->setPixmap(QPixmap::fromImage(img_output));
     

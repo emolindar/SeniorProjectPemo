@@ -2,6 +2,7 @@
 #include <QColor>
 #include "Image.h"
 #include <algorithm>
+#include <cmath>
 
 Image QtoImage(const QImage& img){
     Image result(img.width(), img.height());
@@ -14,6 +15,18 @@ Image QtoImage(const QImage& img){
     }
 
     return result; 
+}
+
+
+//move this to filters after you know it works 
+void exposure(Image& img, float value){
+    float factor = std::pow(2,value);
+
+    for (int i=0; i<img.width(); i++){
+        for (int j=0; j<img.height(); j++){
+            img.setPixel(i,j,Pixel(img.getPixel(i,j).red() * factor, img.getPixel(i,j).green() * factor, img.getPixel(i,j).blue() * factor));
+        }
+    }
 }
 
 QImage ImagetoQ(const Image& img){
@@ -30,6 +43,7 @@ QImage ImagetoQ(const Image& img){
             result.setPixelColor(i,j,color);    
         }
     }
+
 
     return result; 
 }
