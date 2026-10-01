@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QPixmap>
 #include <QImage>
+#include <QSlider>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,6 +27,9 @@ private:
     QSplitter *splitter = new QSplitter();
     QListView *listview = new QListView;
     QLabel *image_viewer = new QLabel;
+
+    QSlider *exposure = new QSlider(Qt::Horizontal);
+
     Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

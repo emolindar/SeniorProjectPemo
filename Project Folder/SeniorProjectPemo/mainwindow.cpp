@@ -3,6 +3,24 @@
 #include <iostream>
 #include "src/Image.h"
 #include "src/imageconverter.h"
+#include "src/algorithms/exposure.h"
+#include <QSlider>
+/*TODO
+1. add a deep copy for Image
+2. add a slider to change the exposure value  - added
+3. start working on the image version graph
+4. add a refresh function, which refreshes the image every time a change is made ( i.e. the slider is moved)
+5. add a way to export the image at the end
+*/
+
+
+
+void applyExposureSlider(int slider_value, Image& etd, Image& og){
+    float ex_value = slider_value/100.0f;
+    etd = og;
+    exposure(etd, ex_value);
+
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,13 +34,16 @@ MainWindow::MainWindow(QWidget *parent)
         return; 
     }
 
-    Image img = QtoImage(loaded);
+    Image original_img = QtoImage(loaded);
+    Image edited_img = original_img;
 
     //testing exposure
-    exposure(img, 2.0f);
+    exposure->setRange(-300, 300);
+    exposure->setValue(0);
+    applyExposureSlider(exposure->value(), edited_img, original_img);
 
 
-    QImage img_output = ImagetoQ(img);
+    QImage img_output = ImagetoQ(edited_img);
     image_viewer->setPixmap(QPixmap::fromImage(img_output));
     
 
@@ -31,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     //image_viewer->setPixmap(pix);
     splitter->addWidget(image_viewer);
     splitter->addWidget(listview);
+    splitter->addWidget(exposure);
     setCentralWidget(splitter);
 //ui->setupUi(this);
 }

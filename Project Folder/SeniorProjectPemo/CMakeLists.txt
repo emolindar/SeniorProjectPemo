@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
         src/Image.cpp
         src/imageconverter.h
         src/imageconverter.cpp
+        src/algorithms/exposure.h
+        src/algorithms/exposure.cpp
 )
 # CHANGED: added Image.h, imageconverter.h, imageconverter.cpp above.
 # This list is shared by both the Qt6 and Qt5/Android branches below,
