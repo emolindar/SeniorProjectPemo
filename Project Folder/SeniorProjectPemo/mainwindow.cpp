@@ -6,12 +6,14 @@
 #include "src/algorithms/exposure.h"
 #include <QSlider>
 /*TODO
+ * -> move all the function implementations to .cpp file, don't leave them in .h
 1. add a deep copy for Image
 2. add a slider to change the exposure value  - added
 3. start working on the image version graph
 4. add a refresh function, which refreshes the image every time a change is made ( i.e. the slider is moved)
 5. add a way to export the image at the end
 6. start thinking about optimizing all the functions, most just have a O(n^2)
+
 */
 
 
