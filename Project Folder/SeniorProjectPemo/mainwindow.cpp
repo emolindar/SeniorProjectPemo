@@ -9,10 +9,19 @@
 
 /*TODO
  * -> move all the function implementations to .cpp file, don't leave them in .h -- kinda done but keep doing
-3. start working on the image version graph
-4. add a refresh function, which refreshes the image every time a change is made ( i.e. the slider is moved)
-5. add a way to export the image at the end
-6. start thinking about optimizing all the functions, most just have a O(n^2)
+-> start working on the image version graph - need to answer a few questions first
+
+            -- when do I want the version to branch? Every change seems to be too much
+            -- how will this be visualized
+            -- in merging, which changes take priority? what if I take an average of the changes? Can I add weights to changes, so that deeperbranches
+                    take some kind of priority and other changes are added on top?
+            -- how will I record the type of changes made? Simply by the image or will I record the function call
+
+
+-> add a way to export the image at the end
+
+
+->  start thinking about optimizing all the functions, most just have a O(n^2)
     - for the exposure -- downscale the quality of the displayed photo and only update it once the slider is released
                 -- downscaling algorithm --- this will be very important - bicubic downscaling(possible)  or high quality Catmull-Rom
                         - could also go with something more original -- scale 4 times, so calculate the average color of 4 pixels and replace them with that
@@ -48,7 +57,12 @@ MainWindow::MainWindow(QWidget *parent)
     exposureSlider->setRange(-300, 300);
     exposureSlider->setValue(0);
 
-    connect(exposureSlider, &QSlider::valueChanged, this, &MainWindow::onExposureChange);
+    //this makes it so that the function onExposureChange is called when the value of the slider is changed
+    connect(exposureSlider, &QSlider::valueChanged, this, &MainWindow::onExposureChangePreview);
+
+    connect(exposureSlider, &QSlider::sliderReleased, this, &MainWindow::onExposureChange);
+
+
 
 
     applyExposureSlider(exposureSlider->value(), images[1], images[0]);
@@ -92,7 +106,11 @@ void MainWindow::onExposureChange(int value){
     refreshDisplay();
 }
 
+void MainWindow::onExposureChangePreview(int value){
+    applyExposureSlider(value, previews[1], previews[0]);
+    refreshDisplayPreview();
 
+}
 void MainWindow::refreshDisplay(){
     QImage output = ImagetoQ(images[1]);
     //adding a scaling so that the image is always the same size, no matter the resolution it has. Will make this dynamic in the future
@@ -100,6 +118,16 @@ void MainWindow::refreshDisplay(){
                        800,
                        600,
                        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation);
+    image_viewer->setPixmap(QPixmap::fromImage(output));
+}
+
+void MainWindow::refreshDisplayPreview(){
+    QImage output = ImagetoQ(previews[1]);
+    output = output.scaled(
+        800,
+        600,
+        Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
 }

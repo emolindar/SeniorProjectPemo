@@ -3,6 +3,9 @@
 
 void exposure(Image& img, float value){
     //this function calculates and applies the change to the colors of an image that correspond to a change in exposure
+
+
+    //the algorithm is quite simple -- simply shift the color values of each pixel by a specified factor
     float factor = std::pow(2,value);
 
     for (int i=0; i<img.width(); i++){
