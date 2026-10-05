@@ -17,6 +17,11 @@
                 -- downscaling algorithm --- this will be very important - bicubic downscaling(possible)  or high quality Catmull-Rom
                         - could also go with something more original -- scale 4 times, so calculate the average color of 4 pixels and replace them with that
 
+
+
+            -- update on point 6 --- implemented the downscaling, need to make it more dynamic ( based on the original size of the image) and then I
+                need to make it so that while holding the slider, only the downscaled version is shown, and the changes are reflected on it, and then
+                when you release the slider the changes are reflected onto the full image
 */
 
 
