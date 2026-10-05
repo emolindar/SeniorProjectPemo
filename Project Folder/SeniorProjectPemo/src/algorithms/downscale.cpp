@@ -25,7 +25,7 @@ Image downscale_image(const Image& img){
 
 
     // in order for this to work the dimensions need to be divisible by 4 (or I at least need to account for other cases)
-    Image result(img.width()/4, img.height()/4);
+    Image result(img.width()/2, img.height()/2);
 
 
 
@@ -61,7 +61,7 @@ Image downscale_image(const Image& img){
                 avg_of_4_colors(img.getPixel(i,j).blue(), img.getPixel(i+1, j).blue(), img.getPixel(i,j+1).blue(), img.getPixel(i+1, j+1).blue())
                 );
 
-            result.setPixel(i,j, result_pixel);
+            result.setPixel(i/2,j/2, result_pixel);
         }
     }
 

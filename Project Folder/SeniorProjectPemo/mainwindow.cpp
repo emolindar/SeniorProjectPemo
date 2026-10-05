@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     images.push_back(QtoImage(loaded));//og image (images[0]
     images.push_back(images[0]); //edited image images[1]
 
+
     previews.push_back(downscale_image(images[0]));
     previews.push_back(downscale_image(images[1]));
 
@@ -48,12 +49,21 @@ MainWindow::MainWindow(QWidget *parent)
     applyExposureSlider(exposureSlider->value(), images[1], images[0]);
 
 
-    QImage img_output = ImagetoQ(images[1]);
-    image_viewer->setPixmap(QPixmap::fromImage(img_output));
-    
+//    QImage img_output = ImagetoQ(images[1]);
 
+ //   image_viewer->setPixmap(QPixmap::fromImage(img_output));
+    
+    //testing the downscaled preview
     QImage preview_output = ImagetoQ(previews[1]);
+    preview_output = preview_output.scaled(
+                      800,
+                      600,
+                      Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(preview_output));
+
+
+
     //QPixmap pix("/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg");
     //image_viewer->setPixmap(pix);
     splitter->addWidget(image_viewer);
@@ -66,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 void MainWindow::applyExposureSlider(int slider_value, Image& etd, Image& og){
-    float ex_value = slider_value/200.0f; // this value determines the amount of exposure change-- fine tune
+    float ex_value = slider_value/300.0f; // this value determines the amount of exposure change-- fine tune
     etd = og;
     exposure(etd, ex_value);
 
@@ -80,6 +90,12 @@ void MainWindow::onExposureChange(int value){
 
 void MainWindow::refreshDisplay(){
     QImage output = ImagetoQ(images[1]);
+    //adding a scaling so that the image is always the same size, no matter the resolution it has. Will make this dynamic in the future
+    output = output.scaled(
+                       800,
+                       600,
+                       Qt::KeepAspectRatio,
+        Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
 }
 
