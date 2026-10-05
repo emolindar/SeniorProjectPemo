@@ -10,6 +10,8 @@
 #include <QSlider>
 #include "src/Image.h"
 #include "src/algorithms/dowscale.h"
+#include <QWidget>
+#include <QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,6 +31,10 @@ private:
     QSplitter *splitter = new QSplitter();
     QListView *listview = new QListView;
     QLabel *image_viewer = new QLabel;
+    QWidget *panel = new QWidget();
+    QVBoxLayout *panelLayout = new QVBoxLayout(panel);
+
+    QLabel *exposureLabel = new QLabel("Exposure", this);
 
     QSlider *exposureSlider = new QSlider(Qt::Horizontal);
 

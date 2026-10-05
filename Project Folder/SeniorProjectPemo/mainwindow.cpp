@@ -31,6 +31,9 @@
             -- update on point 6 --- implemented the downscaling, need to make it more dynamic ( based on the original size of the image) and then I
                 need to make it so that while holding the slider, only the downscaled version is shown, and the changes are reflected on it, and then
                 when you release the slider the changes are reflected onto the full image
+
+
+         -- generalize this to work for all features, not just exposure, so I don't have to write 4 functions that refresh the display every time I add a feature
 */
 
 
@@ -60,34 +63,31 @@ MainWindow::MainWindow(QWidget *parent)
     //this makes it so that the function onExposureChange is called when the value of the slider is changed
     connect(exposureSlider, &QSlider::valueChanged, this, &MainWindow::onExposureChangePreview);
 
-    connect(exposureSlider, &QSlider::sliderReleased, this, &MainWindow::onExposureChange);
+    connect(exposureSlider, &QSlider::sliderReleased, this, [this]() {onExposureChange(exposureSlider->value());});
+    //^ need to add lambda function which can grab the exposure slider value and then call the on exposure change function
 
 
 
 
-    applyExposureSlider(exposureSlider->value(), images[1], images[0]);
-
-
-//    QImage img_output = ImagetoQ(images[1]);
-
- //   image_viewer->setPixmap(QPixmap::fromImage(img_output));
-    
-    //testing the downscaled preview
-    QImage preview_output = ImagetoQ(previews[1]);
-    preview_output = preview_output.scaled(
-                      800,
-                      600,
-                      Qt::KeepAspectRatio,
-                    Qt::SmoothTransformation);
-    image_viewer->setPixmap(QPixmap::fromImage(preview_output));
+    QImage img_output = ImagetoQ(images[1]);
+    img_output = img_output.scaled(
+        800,
+        600,
+        Qt::KeepAspectRatio,
+        Qt::SmoothTransformation);
+    image_viewer->setPixmap(QPixmap::fromImage(img_output));
 
 
 
     //QPixmap pix("/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg");
     //image_viewer->setPixmap(pix);
     splitter->addWidget(image_viewer);
-    splitter->addWidget(listview);
-    splitter->addWidget(exposureSlider);
+
+
+    panelLayout->addWidget(exposureLabel);
+    panelLayout->addWidget(exposureSlider);
+    panelLayout->addStretch();
+    splitter->addWidget(panel);
     setCentralWidget(splitter);
 //ui->setupUi(this);
 }
