@@ -9,6 +9,7 @@
 #include <QImage>
 #include <QSlider>
 #include "src/Image.h"
+#include "src/algorithms/dowscale.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,6 +36,7 @@ private:
 
     //the data structure that will hold the image versions will go here, going with vector for now, for ease
     vector<Image> images;
+    vector<Image> previews;
 
 
     //my own functions (which should count towards the algorithms)

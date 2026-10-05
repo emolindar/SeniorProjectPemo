@@ -1,8 +1,8 @@
 #include "exposure.h"
 
 
-
 void exposure(Image& img, float value){
+    //this function calculates and applies the change to the colors of an image that correspond to a change in exposure
     float factor = std::pow(2,value);
 
     for (int i=0; i<img.width(); i++){
@@ -11,3 +11,5 @@ void exposure(Image& img, float value){
         }
     }
 }
+
+

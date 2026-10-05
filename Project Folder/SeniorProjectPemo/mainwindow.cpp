@@ -5,6 +5,8 @@
 #include "src/imageconverter.h"
 #include "src/algorithms/exposure.h"
 #include <QSlider>
+
+
 /*TODO
  * -> move all the function implementations to .cpp file, don't leave them in .h -- kinda done but keep doing
 3. start working on the image version graph
@@ -33,6 +35,9 @@ MainWindow::MainWindow(QWidget *parent)
     images.push_back(QtoImage(loaded));//og image (images[0]
     images.push_back(images[0]); //edited image images[1]
 
+    previews.push_back(downscale_image(images[0]));
+    previews.push_back(downscale_image(images[1]));
+
     //testing exposure
     exposureSlider->setRange(-300, 300);
     exposureSlider->setValue(0);
@@ -47,7 +52,8 @@ MainWindow::MainWindow(QWidget *parent)
     image_viewer->setPixmap(QPixmap::fromImage(img_output));
     
 
-
+    QImage preview_output = ImagetoQ(previews[1]);
+    image_viewer->setPixmap(QPixmap::fromImage(preview_output));
     //QPixmap pix("/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg");
     //image_viewer->setPixmap(pix);
     splitter->addWidget(image_viewer);
