@@ -6,24 +6,17 @@
 #include "src/algorithms/exposure.h"
 #include <QSlider>
 /*TODO
- * -> move all the function implementations to .cpp file, don't leave them in .h
-1. add a deep copy for Image
-2. add a slider to change the exposure value  - added
+ * -> move all the function implementations to .cpp file, don't leave them in .h -- kinda done but keep doing
 3. start working on the image version graph
 4. add a refresh function, which refreshes the image every time a change is made ( i.e. the slider is moved)
 5. add a way to export the image at the end
 6. start thinking about optimizing all the functions, most just have a O(n^2)
+    - for the exposure -- downscale the quality of the displayed photo and only update it once the slider is released
+                -- downscaling algorithm --- this will be very important - bicubic downscaling(possible)  or high quality Catmull-Rom
+                        - could also go with something more original -- scale 4 times, so calculate the average color of 4 pixels and replace them with that
 
 */
 
-
-
-void applyExposureSlider(int slider_value, Image& etd, Image& og){
-    float ex_value = slider_value/100.0f;
-    etd = og;
-    exposure(etd, ex_value);
-
-}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -37,16 +30,20 @@ MainWindow::MainWindow(QWidget *parent)
         return; 
     }
 
-    Image original_img = QtoImage(loaded);
-    Image edited_img = original_img;
+    images.push_back(QtoImage(loaded));//og image (images[0]
+    images.push_back(images[0]); //edited image images[1]
 
     //testing exposure
-    exposure->setRange(-300, 300);
-    exposure->setValue(0);
-    applyExposureSlider(exposure->value(), edited_img, original_img);
+    exposureSlider->setRange(-300, 300);
+    exposureSlider->setValue(0);
+
+    connect(exposureSlider, &QSlider::valueChanged, this, &MainWindow::onExposureChange);
 
 
-    QImage img_output = ImagetoQ(edited_img);
+    applyExposureSlider(exposureSlider->value(), images[1], images[0]);
+
+
+    QImage img_output = ImagetoQ(images[1]);
     image_viewer->setPixmap(QPixmap::fromImage(img_output));
     
 
@@ -55,10 +52,31 @@ MainWindow::MainWindow(QWidget *parent)
     //image_viewer->setPixmap(pix);
     splitter->addWidget(image_viewer);
     splitter->addWidget(listview);
-    splitter->addWidget(exposure);
+    splitter->addWidget(exposureSlider);
     setCentralWidget(splitter);
 //ui->setupUi(this);
 }
+
+
+
+void MainWindow::applyExposureSlider(int slider_value, Image& etd, Image& og){
+    float ex_value = slider_value/200.0f; // this value determines the amount of exposure change-- fine tune
+    etd = og;
+    exposure(etd, ex_value);
+
+}
+
+void MainWindow::onExposureChange(int value){
+    applyExposureSlider(value, images[1], images[0]);
+    refreshDisplay();
+}
+
+
+void MainWindow::refreshDisplay(){
+    QImage output = ImagetoQ(images[1]);
+    image_viewer->setPixmap(QPixmap::fromImage(output));
+}
+
 
 MainWindow::~MainWindow()
 {

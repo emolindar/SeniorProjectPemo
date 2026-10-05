@@ -22,11 +22,9 @@ public:
 	void green(float g){rgb_[1]=g;}
 	void rgb(vector<float> rgb){rgb_ = rgb;}
 
-	void setPixel(float r, float g, float b){
-		rgb_.clear();
-		this->rgb_ = {r,g,b};
-	}
-private: 
+    void setPixel(float r, float g, float b);
+private:
+    //starting out with a black image ( and initial values, so that those can be changed later on)
 	vector<float> rgb_ = {0,0,0}; 
 };
 
@@ -34,9 +32,11 @@ private:
 
 class Image{
 public:
-	Image(int width,int height) : width_(width), height_(height) {
-		image_data_.resize(width, vector<Pixel>(height, Pixel(0,0,0)));
-	}
+    Image(int width,int height);
+
+    //deep copy used to create different versions of the image
+    Image(const Image& img) : width_(img.width_), height_(img.height_), image_data_(img.image_data_) {}
+
 	int width() const {return width_;}
 	int height() const {return height_;}
 	vector<vector<Pixel>> image_data(){return image_data_;}

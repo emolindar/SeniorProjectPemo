@@ -1,6 +1,7 @@
 #include "exposure.h"
 
 
+
 void exposure(Image& img, float value){
     float factor = std::pow(2,value);
 
