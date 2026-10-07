@@ -78,11 +78,22 @@ float max_of_two(float a, float b){
     return b;
 
 }
+//add a min of two helper function
 
 //bicubic interpolation
 Image downscale_image_bicubic(const Image& img, int result_width, int result_height, int interpolation_size){
     //this is another downscaling algorithm which should provide us with a more efficient result,
     //along with ability to scale, not hardcoded scale like the simpler downscaling algorithm I do have
+
+    //exmplanation of my algorithm:
+    /*
+     * imagine that you take an empty downscaled image ( ie some pixels) that are exactly the desired width and hight
+     * then grab the corners of that image and stretch is out (pixels remain as dots, only the space between them gets stretched)
+     * so that the corners of the downscaled image match up with the corners of the og image
+     * the pixels of the downscaled image would probably sit someone inbetween the pixels of the og image.
+     * then imagine a square area around each downscaled pixel. That is the neighborhood we want to interpolate
+     * and take the value of the corresponding place of the downscaled pixel
+     */
 
 
     Image result(result_width,result_height);
@@ -111,6 +122,7 @@ Image downscale_image_bicubic(const Image& img, int result_width, int result_hei
              * x x x x          ihmax
             */
 
+            //to fix =-- one of these needs to be min_of_two
             int interp_width_min = std::floor(max_of_two((float)(corr_width - std::sqrt(interpolation_size)/2.0f) , 0.0f));
             int interp_width_max = std::floor(max_of_two((float)(corr_width + std::sqrt(interpolation_size)/2.0f) , (float)(img.width()-1)));
 
@@ -122,13 +134,20 @@ Image downscale_image_bicubic(const Image& img, int result_width, int result_hei
              * |color value
              * |     /
              * |    /
-             * |   /j(height)
+             * |   /y(height)
              * |  /
-             * | /                    i (width)
+             * | /                    x (width)
              * |/________________________>
              */
 
 
+            for( int x = interp_width_min; x<=interp_width_max; x++){
+                for( int y = interp_height_min; y <= interp_height_max; y++){
+
+                    //catmull-rom spline interpolation given the set of points that I have
+
+                }
+            }
         }
     }
 
