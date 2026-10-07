@@ -166,6 +166,8 @@ Image downscale_image_bicubic(Image& img, int result_width, int result_height, i
 
 
             float weighted_sum_red = 0;
+            float weighted_sum_green = 0;
+            float weighted_sum_blue = 0;
             float total_weight =0 ;
             for( int x = interp_width_min; x<=interp_width_max; x++){
                 float lanczo_weight = 0;
@@ -179,17 +181,22 @@ Image downscale_image_bicubic(Image& img, int result_width, int result_height, i
 
                     //Using Lanczo's weighted values -- closer to 0 the further away from the point that we go
 
-                    float distance_to_point = std::sqrt( std::pow((i-corr_width),2) + std::pow( j-corr_height,2));
+                    float distance_to_point = std::sqrt( std::pow((x-corr_width),2) + std::pow( y-corr_height,2));
                     lanczo_weight = lanczoWeight(distance_to_point, std::sqrt(interpolation_size)/2.0f);
 
 
                 }
 
                 weighted_sum_red += img.image_data()[i][j].red() * lanczo_weight;
+                weighted_sum_green += img.image_data()[i][j].green() * lanczo_weight;
+                weighted_sum_blue += img.image_data()[i][j].blue() * lanczo_weight;
 
                 total_weight += lanczo_weight;
 
             }
+
+
+
         }
     }
 
