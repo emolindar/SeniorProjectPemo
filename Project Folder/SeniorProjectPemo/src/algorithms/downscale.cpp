@@ -1,5 +1,6 @@
 #include "dowscale.h"
 
+
 float avg_of_4_colors(float c1, float c2, float c3, float c4){
     /*this function calculates the average of 4 colors -- for example the average of 4 hues of red
         takes 4 floats,
@@ -69,6 +70,15 @@ Image downscale_image(const Image& img){
 }
 
 
+//helper functino that returns the max of two numbers, so I don't import another library
+float max_of_two(float a, float b){
+    if (a>=b){
+        return a;
+    }
+    return b;
+
+}
+
 //bicubic interpolation
 Image downscale_image_bicubic(const Image& img, int result_width, int result_height, int interpolation_size){
     //this is another downscaling algorithm which should provide us with a more efficient result,
@@ -82,6 +92,45 @@ Image downscale_image_bicubic(const Image& img, int result_width, int result_hei
     //the resulting pixel.
 
 
+    for(int i=0; i<result.width(); i++){
+        for(int j=0; j< result.height(); j++){
 
 
+            //calc corresponding loc of resulting pixel in og image
+
+            float corr_width = ( (float)img.width()/(float)result.width() ) * i;
+            float corr_height = ( (float)img.height()/(float)result.height() ) * j;
+
+
+            //take those and find the surrounding pixels
+            /*
+             * iwmin    iwmax    ihmin
+             * x x x x
+             * x x x x
+             * x x x x
+             * x x x x          ihmax
+            */
+
+            int interp_width_min = std::floor(max_of_two((float)(corr_width - std::sqrt(interpolation_size)/2.0f) , 0.0f));
+            int interp_width_max = std::floor(max_of_two((float)(corr_width + std::sqrt(interpolation_size)/2.0f) , (float)(img.width()-1)));
+
+            int interp_height_min = std::floor(max_of_two((float)(corr_height - std::sqrt(interpolation_size)/2.0f) , 0.0f));
+            int interp_height_max = std::floor(max_of_two((float)(corr_height + std::sqrt(interpolation_size)/2.0f) , (float)(img.height()-1)));
+
+
+            /* ^
+             * |color value
+             * |     /
+             * |    /
+             * |   /j(height)
+             * |  /
+             * | /                    i (width)
+             * |/________________________>
+             */
+
+
+        }
+    }
+
+    return result;
 }
