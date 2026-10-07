@@ -67,3 +67,21 @@ Image downscale_image(const Image& img){
 
     return result;
 }
+
+
+//bicubic interpolation
+Image downscale_image_bicubic(const Image& img, int result_width, int result_height, int interpolation_size){
+    //this is another downscaling algorithm which should provide us with a more efficient result,
+    //along with ability to scale, not hardcoded scale like the simpler downscaling algorithm I do have
+
+
+    Image result(result_width,result_height);
+
+    //idea is that I will look at the pixel location of the result, then based on it's scale, ie width and height, find it's corresponding location in the og image
+    //then,I will look at [interpolation_size] pixels around it and curve their rgb values, finding the values that would correspond to the relative position of
+    //the resulting pixel.
+
+
+
+
+}
