@@ -16,6 +16,7 @@
 //choosing which downscaling algorithm is used
 #include <QRadioButton>
 #include <QButtonGroup>
+#include <functional>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -63,6 +64,8 @@ private:
     QRadioButton *averageDowncaling;
     QRadioButton *bicubicDownscaling;
     QButtonGroup *downscalingButtonGroup;
+
+    std::function<Image(Image&, int,int,int)> downscalingFunction;
 
     //in order to "connect" the updating slider with the function, I need to add it to its own group like this
 private slots:

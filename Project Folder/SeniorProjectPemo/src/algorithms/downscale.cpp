@@ -13,7 +13,7 @@ float avg_of_4_colors(float c1, float c2, float c3, float c4){
 }
 
 
-Image downscale_image(const Image& img){
+Image downscale_image(const Image& img, int result_width, int result_height, int interpolation_size){
     /*this function will return a 4 times downscaled version of the provided image
      * takes an Image object
      * returns a downscaled image object
@@ -79,6 +79,12 @@ float max_of_two(float a, float b){
 
 }
 //add a min of two helper function
+float min_of_two(float a, float b){
+    if (a<=b){
+        return a;
+    }
+    return b;
+}
 
 //helper function for Lanczo's weight:
 float sinc(float num){
@@ -93,7 +99,7 @@ float sinc(float num){
 float lanczoWeight(float distance, float area_radius){
     if (distance == 0){
         return 1.0f;
-    }else if(distance <= area_radius || distance >= area_radius){
+    }else if(distance >= area_radius){
         return 0.0f;
     }
 
@@ -148,10 +154,10 @@ Image downscale_image_bicubic(Image& img, int result_width, int result_height, i
 
             //to fix =-- one of these needs to be min_of_two
             int interp_width_min = std::floor(max_of_two((float)(corr_width - std::sqrt(interpolation_size)/2.0f) , 0.0f));
-            int interp_width_max = std::floor(max_of_two((float)(corr_width + std::sqrt(interpolation_size)/2.0f) , (float)(img.width()-1)));
+            int interp_width_max = std::floor(min_of_two((float)(corr_width + std::sqrt(interpolation_size)/2.0f) , (float)(img.width()-1)));
 
             int interp_height_min = std::floor(max_of_two((float)(corr_height - std::sqrt(interpolation_size)/2.0f) , 0.0f));
-            int interp_height_max = std::floor(max_of_two((float)(corr_height + std::sqrt(interpolation_size)/2.0f) , (float)(img.height()-1)));
+            int interp_height_max = std::floor(min_of_two((float)(corr_height + std::sqrt(interpolation_size)/2.0f) , (float)(img.height()-1)));
 
 
             /* ^
@@ -182,23 +188,25 @@ Image downscale_image_bicubic(Image& img, int result_width, int result_height, i
                     //Using Lanczo's weighted values -- closer to 0 the further away from the point that we go
 
                     float distance_to_point = std::sqrt( std::pow((x-corr_width),2) + std::pow( y-corr_height,2));
+
                     lanczo_weight = lanczoWeight(distance_to_point, std::sqrt(interpolation_size)/2.0f);
 
-                    weighted_sum_red += img.image_data()[i][j].red() * lanczo_weight;
-                    weighted_sum_green += img.image_data()[i][j].green() * lanczo_weight;
-                    weighted_sum_blue += img.image_data()[i][j].blue() * lanczo_weight;
+                    weighted_sum_red += img.getPixel(x,y).red() * lanczo_weight;
+                    weighted_sum_green += img.getPixel(x,y).green() * lanczo_weight;
+                    weighted_sum_blue += img.getPixel(x,y).blue() * lanczo_weight;
 
+                    total_weight += lanczo_weight;
                 }
 
-                total_weight += lanczo_weight;
+
 
             }
 
 
             result.setPixel(i,j,Pixel(
-                                      weighted_sum_red / total_weight,
-                                        weighted_sum_green / total_weight,
-                                        weighted_sum_blue / total_weight));
+                                      std::clamp(weighted_sum_red / total_weight, 0.0f, 1.0f),
+                                        std::clamp(weighted_sum_green / total_weight, 0.0f, 1.0f),
+                                        std::clamp(weighted_sum_blue / total_weight, 0.0f, 1.0f)));
 
 
         }

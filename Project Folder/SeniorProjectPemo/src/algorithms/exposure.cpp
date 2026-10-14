@@ -10,7 +10,11 @@ void exposure(Image& img, float value){
 
     for (int i=0; i<img.width(); i++){
         for (int j=0; j<img.height(); j++){
-            img.setPixel(i,j,Pixel(img.getPixel(i,j).red() * factor, img.getPixel(i,j).green() * factor, img.getPixel(i,j).blue() * factor));
+            img.setPixel(i,j,Pixel(
+                                   std::clamp(img.getPixel(i,j).red() * factor, 0.0f, 1.0f),
+                                   std::clamp(img.getPixel(i,j).green() * factor, 0.0f, 1.0f),
+                                   std::clamp(img.getPixel(i,j).blue() * factor, 0.0f, 1.0f)
+                                     ));
         }
     }
 }

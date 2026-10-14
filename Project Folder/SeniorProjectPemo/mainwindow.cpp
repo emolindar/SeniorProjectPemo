@@ -49,12 +49,6 @@ MainWindow::MainWindow(QWidget *parent)
         return; 
     }
 
-    images.push_back(QtoImage(loaded));//og image (images[0]
-    images.push_back(images[0]); //edited image images[1]
-
-
-    previews.push_back(downscale_image(images[0]));
-    previews.push_back(downscale_image(images[1]));
 
     //testing exposure
     exposureSlider->setRange(-300, 300);
@@ -71,11 +65,21 @@ MainWindow::MainWindow(QWidget *parent)
     averageDowncaling = new QRadioButton("Averaging pixel Values in a block of 4");
     bicubicDownscaling = new QRadioButton("Bicubic downscaling");
     averageDowncaling -> setChecked(true);
+        //setting the default downscaling algorithm as the simple averaging algorithm
+    downscalingFunction = downscale_image;
     downscalingButtonGroup = new QButtonGroup(this);
     downscalingButtonGroup->addButton(averageDowncaling);
     downscalingButtonGroup->addButton(bicubicDownscaling);
 
     connect(downscalingButtonGroup, &QButtonGroup::buttonClicked, this, &MainWindow::onDownscalingChanged);
+
+
+    //placeholder -- change to the version graph and make it so a preview is only generated for the latest used "image"
+    images.push_back(QtoImage(loaded));//og image (images[0]
+    images.push_back(images[0]); //edited image images[1]
+    previews.push_back(downscalingFunction(images[0],800,600,16));
+    previews.push_back(downscalingFunction(images[1],800,600,16));
+
 
     QImage img_output = ImagetoQ(images[1]);
     img_output = img_output.scaled(
@@ -102,13 +106,16 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::onDownscalingChanged(){
+    //set the function for the downscaling algorithm
     if(averageDowncaling -> isChecked()){
-        previews[0] = downscale_image(images[0]);
-        previews[1] = downscale_image(images[1]);
+        downscalingFunction = downscale_image;
     }else if(bicubicDownscaling -> isChecked()){
-        previews[0] = downscale_image_bicubic(images[0]);
-        previews[1] = downscale_image_bicubic(images[1]);
+        downscalingFunction = downscale_image_bicubic;
     }
+
+    //placeholder until I create the version graph
+    previews[0] = downscalingFunction(images[0], 200,100, 16);
+    previews[1] = downscalingFunction(images[1], 200, 100, 16);
 }
 
 void MainWindow::applyExposureSlider(int slider_value, Image& etd, Image& og){

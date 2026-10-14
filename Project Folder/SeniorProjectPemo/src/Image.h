@@ -8,9 +8,9 @@ using namespace std;
 class Pixel{
 public:
 	Pixel(float red, float green, float blue){
-		rgb_[0]=red;
-		rgb_[1]=green;
-		rgb_[2]=blue;
+        rgb_[0]=std::clamp(red, 0.0f, 1.0f);
+        rgb_[1]=std::clamp(green, 0.0f, 1.0f);
+        rgb_[2]=std::clamp(blue, 0.0f, 1.0f);
 	}
 
 	float red(){return rgb_[0];}

@@ -3,7 +3,11 @@
 
 void Pixel::setPixel(float r, float g, float b){
         rgb_.clear();
-        this->rgb_ = {r,g,b};
+        this->rgb_ = {
+                       std::clamp(r, 0.0f, 1.0f),
+                       std::clamp(g, 0.0f, 1.0f),
+                       std::clamp(b, 0.0f, 1.0f)
+        };
     }
 
 
