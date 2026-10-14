@@ -77,14 +77,14 @@ MainWindow::MainWindow(QWidget *parent)
     //placeholder -- change to the version graph and make it so a preview is only generated for the latest used "image"
     images.push_back(QtoImage(loaded));//og image (images[0]
     images.push_back(images[0]); //edited image images[1]
-    previews.push_back(downscalingFunction(images[0],800,600,16));
-    previews.push_back(downscalingFunction(images[1],800,600,16));
+    previews.push_back(downscalingFunction(images[0],300,400,16));
+    previews.push_back(downscalingFunction(images[1],300,400,16));
 
 
     QImage img_output = ImagetoQ(images[1]);
     img_output = img_output.scaled(
-        800,
         600,
+        800,
         Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(img_output));
@@ -114,8 +114,8 @@ void MainWindow::onDownscalingChanged(){
     }
 
     //placeholder until I create the version graph
-    previews[0] = downscalingFunction(images[0], 200,100, 16);
-    previews[1] = downscalingFunction(images[1], 200, 100, 16);
+    previews[0] = downscalingFunction(images[0], 300,400, 16);
+    previews[1] = downscalingFunction(images[1], 300, 400, 16);
 }
 
 void MainWindow::applyExposureSlider(int slider_value, Image& etd, Image& og){
