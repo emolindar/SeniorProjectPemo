@@ -184,17 +184,21 @@ Image downscale_image_bicubic(Image& img, int result_width, int result_height, i
                     float distance_to_point = std::sqrt( std::pow((x-corr_width),2) + std::pow( y-corr_height,2));
                     lanczo_weight = lanczoWeight(distance_to_point, std::sqrt(interpolation_size)/2.0f);
 
+                    weighted_sum_red += img.image_data()[i][j].red() * lanczo_weight;
+                    weighted_sum_green += img.image_data()[i][j].green() * lanczo_weight;
+                    weighted_sum_blue += img.image_data()[i][j].blue() * lanczo_weight;
 
                 }
-
-                weighted_sum_red += img.image_data()[i][j].red() * lanczo_weight;
-                weighted_sum_green += img.image_data()[i][j].green() * lanczo_weight;
-                weighted_sum_blue += img.image_data()[i][j].blue() * lanczo_weight;
 
                 total_weight += lanczo_weight;
 
             }
 
+
+            result.setPixel(i,j,Pixel(
+                                      weighted_sum_red / total_weight,
+                                        weighted_sum_green / total_weight,
+                                        weighted_sum_blue / total_weight));
 
 
         }

@@ -67,7 +67,15 @@ MainWindow::MainWindow(QWidget *parent)
     //^ need to add lambda function which can grab the exposure slider value and then call the on exposure change function
 
 
+    //downscaling algorithm buttons choice
+    averageDowncaling = new QRadioButton("Averaging pixel Values in a block of 4");
+    bicubicDownscaling = new QRadioButton("Bicubic downscaling");
+    averageDowncaling -> setChecked(true);
+    downscalingButtonGroup = new QButtonGroup(this);
+    downscalingButtonGroup->addButton(averageDowncaling);
+    downscalingButtonGroup->addButton(bicubicDownscaling);
 
+    connect(downscalingButtonGroup, &QButtonGroup::buttonClicked, this, &MainWindow::onDownscalingChanged);
 
     QImage img_output = ImagetoQ(images[1]);
     img_output = img_output.scaled(
@@ -83,7 +91,8 @@ MainWindow::MainWindow(QWidget *parent)
     //image_viewer->setPixmap(pix);
     splitter->addWidget(image_viewer);
 
-
+    panelLayout->addWidget(averageDowncaling);
+    panelLayout->addWidget(bicubicDownscaling);
     panelLayout->addWidget(exposureLabel);
     panelLayout->addWidget(exposureSlider);
     panelLayout->addStretch();
@@ -92,7 +101,15 @@ MainWindow::MainWindow(QWidget *parent)
 //ui->setupUi(this);
 }
 
-
+void MainWindow::onDownscalingChanged(){
+    if(averageDowncaling -> isChecked()){
+        previews[0] = downscale_image(images[0]);
+        previews[1] = downscale_image(images[1]);
+    }else if(bicubicDownscaling -> isChecked()){
+        previews[0] = downscale_image_bicubic(images[0]);
+        previews[1] = downscale_image_bicubic(images[1]);
+    }
+}
 
 void MainWindow::applyExposureSlider(int slider_value, Image& etd, Image& og){
     float ex_value = slider_value/300.0f; // this value determines the amount of exposure change-- fine tune
