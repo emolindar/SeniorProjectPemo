@@ -38,6 +38,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/algorithms/downscale.cpp
         src/versionGraph.h
         src/versionGraph.cpp
+        src/algorithms/contrast.h
+        src/algorithms/contrast.cpp
+        src/algorithms/highlights.h
+        src/algorithms/highlights.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SeniorProjectPemo APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

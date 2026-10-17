@@ -4,6 +4,8 @@
 #include "src/Image.h"
 #include "src/imageconverter.h"
 #include "src/algorithms/exposure.h"
+#include "src/algorithms/contrast.h"
+#include "src/algorithms/highlights.h"
 #include <QSlider>
 
 
@@ -60,6 +62,23 @@ MainWindow::MainWindow(QWidget *parent)
     connect(exposureSlider, &QSlider::sliderReleased, this, [this]() {onExposureChange(exposureSlider->value());});
     //^ need to add lambda function which can grab the exposure slider value and then call the on exposure change function
 
+    //attempting to add the contrast slider with the generalized function
+    contrastSlider->setRange(-300, 300);
+    contrastSlider->setValue(0);
+
+    //connecting the contrastSlider with the modified function but with the generalized method for applying modifications
+    connect(contrastSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(contrast, value); });
+    //doing the same for the contrast preview
+    connect(contrastSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange(contrast,contrastSlider->value());});
+
+
+    //highlights
+    hightlightsSlider->setRange(-300, 300);
+    hightlightsSlider->setValue(0);
+
+    connect(hightlightsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(highlights, value);});
+    connect(hightlightsSlider, &QSlider::sliderReleased, this, [this](){onModificationChange(highlights, hightlightsSlider->value());} );
+
 
     //downscaling algorithm buttons choice
     averageDowncaling = new QRadioButton("Averaging pixel Values in a block of 4");
@@ -83,8 +102,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     QImage img_output = ImagetoQ(images[1]);
     img_output = img_output.scaled(
-        600,
-        800,
+        images[0].width(),
+        images[0].height(),
         Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(img_output));
@@ -99,6 +118,10 @@ MainWindow::MainWindow(QWidget *parent)
     panelLayout->addWidget(bicubicDownscaling);
     panelLayout->addWidget(exposureLabel);
     panelLayout->addWidget(exposureSlider);
+    panelLayout->addWidget(contrastLabel);
+    panelLayout->addWidget(contrastSlider);
+    panelLayout->addWidget(hightlightsLabel);
+    panelLayout->addWidget(hightlightsSlider);
     panelLayout->addStretch();
     splitter->addWidget(panel);
     setCentralWidget(splitter);
@@ -118,13 +141,16 @@ void MainWindow::onDownscalingChanged(){
     previews[1] = downscalingFunction(images[1], 300, 400, 16);
 }
 
-void MainWindow::applyExposureSlider(int slider_value, Image& etd, Image& og){
+void MainWindow::applyExposureSlider(int slider_value, Image& edt, Image& og){
     float ex_value = slider_value/300.0f; // this value determines the amount of exposure change-- fine tune
-    etd = og;
-    exposure(etd, ex_value);
+    edt = og;
+    exposure(edt, ex_value);
 
 }
 
+
+//TODO IN THE FOLLOWING METHODS:
+// MAKE SURE TO CHANGE THE DATA STRUCTURE USED TO STORE THE IMAGE
 void MainWindow::onExposureChange(int value){
     applyExposureSlider(value, images[1], images[0]);
     refreshDisplay();
@@ -135,12 +161,34 @@ void MainWindow::onExposureChangePreview(int value){
     refreshDisplayPreview();
 
 }
+
+void MainWindow::applyModificationSlider(std::function<void(Image&, float)> func, int slider_value, Image& edt, Image& og){
+    //attempting to generalize the method to apply a change
+
+    float value = slider_value/300.0f;
+    edt = og; // this line needs to be changed, makes no sense
+    func(edt, value);
+}
+
+
+void MainWindow::onModificationChange(std::function<void(Image&, float)> func, float value){
+    applyModificationSlider(func, value, images[1], images[0]);
+    refreshDisplay();
+}
+
+void MainWindow::onModificationChangePreview(std::function<void(Image&, float)> func, float value){
+    applyModificationSlider(func, value, previews[1], previews[0]);
+    refreshDisplayPreview();
+}
+
+
+
 void MainWindow::refreshDisplay(){
     QImage output = ImagetoQ(images[1]);
     //adding a scaling so that the image is always the same size, no matter the resolution it has. Will make this dynamic in the future
     output = output.scaled(
-                       800,
-                       600,
+                       images[0].width(),
+                       images[1].height(),
                        Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
@@ -149,8 +197,8 @@ void MainWindow::refreshDisplay(){
 void MainWindow::refreshDisplayPreview(){
     QImage output = ImagetoQ(previews[1]);
     output = output.scaled(
-        800,
-        600,
+        images[0].width(),
+        images[0].height(),
         Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));

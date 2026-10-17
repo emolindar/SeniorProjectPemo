@@ -40,8 +40,11 @@ private:
     QVBoxLayout *panelLayout = new QVBoxLayout(panel);
 
     QLabel *exposureLabel = new QLabel("Exposure", this);
-
     QSlider *exposureSlider = new QSlider(Qt::Horizontal);
+    QLabel *contrastLabel = new QLabel("Contrast", this);
+    QSlider *contrastSlider = new QSlider(Qt::Horizontal);
+    QLabel *hightlightsLabel = new QLabel("Highlights", this);
+    QSlider *hightlightsSlider = new QSlider(Qt::Horizontal);
 
     Ui::MainWindow *ui;
 
@@ -57,7 +60,9 @@ private:
     void refreshDisplay();
     void refreshDisplayPreview();
     //exposure
-    void applyExposureSlider(int slider_value, Image& etd, Image& og);
+    void applyExposureSlider(int slider_value, Image& edt, Image& og);
+
+    void applyModificationSlider(std::function<void(Image&, float)> func, int slider_value, Image& edt, Image& og);
 
 
     //widgets needed in order to choose which downscaling algorithm is used
@@ -71,6 +76,10 @@ private:
 private slots:
     void onExposureChange(int value);
     void onExposureChangePreview(int value);
+
+    void onModificationChange(std::function<void(Image&, float)> func, float value);
+    void onModificationChangePreview(std::function<void(Image&, float)> func, float value);
+
     void onDownscalingChanged();
 
 
