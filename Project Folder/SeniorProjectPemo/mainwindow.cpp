@@ -129,7 +129,7 @@ MainWindow::MainWindow(QWidget *parent)
     panelLayout->addWidget(contrastSlider);
     panelLayout->addWidget(hightlightsLabel);
     panelLayout->addWidget(hightlightsSlider);
-    panelLayout->addWidget(shadowslabel);
+    panelLayout->addWidget(shadowsLabel);
     panelLayout->addWidget(shadowsSlider);
     panelLayout->addStretch();
     splitter->addWidget(panel);
@@ -208,7 +208,7 @@ void MainWindow::refreshDisplayPreview(){
     output = output.scaled(
         images[0].width(),
         images[0].height(),
-        Qt::KeepAspectRatio,
+        Qt::IgnoreAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
 }

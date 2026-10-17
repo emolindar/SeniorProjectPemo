@@ -45,7 +45,7 @@ private:
     QSlider *contrastSlider = new QSlider(Qt::Horizontal);
     QLabel *hightlightsLabel = new QLabel("Highlights", this);
     QSlider *hightlightsSlider = new QSlider(Qt::Horizontal);
-    QLabel *shadowslabel = new QLabel("Shadows",this);
+    QLabel *shadowsLabel = new QLabel("Shadows",this);
     QSlider *shadowsSlider = new QSlider(Qt::Horizontal);
 
     Ui::MainWindow *ui;

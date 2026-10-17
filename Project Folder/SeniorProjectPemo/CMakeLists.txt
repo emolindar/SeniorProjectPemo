@@ -23,6 +23,16 @@ set(PROJECT_SOURCES
         src/imageconverter.cpp
         src/algorithms/exposure.h
         src/algorithms/exposure.cpp
+        src/algorithms/dowscale.h
+        src/algorithms/downscale.cpp
+        src/versionGraph.h
+        src/versionGraph.cpp
+        src/algorithms/contrast.h
+        src/algorithms/contrast.cpp
+        src/algorithms/highlights.h
+        src/algorithms/highlights.cpp
+        src/algorithms/shadows.h
+        src/algorithms/shadows.cpp
 )
 # CHANGED: added Image.h, imageconverter.h, imageconverter.cpp above.
 # This list is shared by both the Qt6 and Qt5/Android branches below,
@@ -44,6 +54,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/algorithms/highlights.cpp
         src/algorithms/shadows.h
         src/algorithms/shadows.cpp
+        src/algorithms/extraFuncts.h
+        src/algorithms/extraFuncts.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SeniorProjectPemo APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
