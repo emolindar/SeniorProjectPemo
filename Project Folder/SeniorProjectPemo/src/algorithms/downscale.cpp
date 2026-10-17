@@ -152,7 +152,7 @@ Image downscale_image_bicubic(Image& img, int result_width, int result_height, i
              * x x x x          ihmax
             */
 
-            //to fix =-- one of these needs to be min_of_two
+
             int interp_width_min = std::floor(max_of_two((float)(corr_width - std::sqrt(interpolation_size)/2.0f) , 0.0f));
             int interp_width_max = std::floor(min_of_two((float)(corr_width + std::sqrt(interpolation_size)/2.0f) , (float)(img.width()-1)));
 

@@ -6,6 +6,7 @@
 #include "src/algorithms/exposure.h"
 #include "src/algorithms/contrast.h"
 #include "src/algorithms/highlights.h"
+#include "src/algorithms/shadows.h"
 #include <QSlider>
 
 
@@ -79,6 +80,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(hightlightsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(highlights, value);});
     connect(hightlightsSlider, &QSlider::sliderReleased, this, [this](){onModificationChange(highlights, hightlightsSlider->value());} );
 
+    //shadows
+    shadowsSlider->setRange(-300, 300);
+    shadowsSlider->setValue(0);
+
+    connect(shadowsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(shadows, value);});
+    connect(shadowsSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange(shadows, shadowsSlider->value());});
 
     //downscaling algorithm buttons choice
     averageDowncaling = new QRadioButton("Averaging pixel Values in a block of 4");
@@ -122,6 +129,8 @@ MainWindow::MainWindow(QWidget *parent)
     panelLayout->addWidget(contrastSlider);
     panelLayout->addWidget(hightlightsLabel);
     panelLayout->addWidget(hightlightsSlider);
+    panelLayout->addWidget(shadowslabel);
+    panelLayout->addWidget(shadowsSlider);
     panelLayout->addStretch();
     splitter->addWidget(panel);
     setCentralWidget(splitter);
