@@ -13,7 +13,7 @@ private:
     //the idea is that each node will simply hold the changes made to the image, not a whole image
 
     //plan for the functions is that I don't specify the exact amount of parameters but I rather add them in as lambda functions
-    std::function<void(Image&)> changeMade;
+    std::function<void(Image&, float)> changeMade;
 
 
     float changeValue;
@@ -23,9 +23,9 @@ public:
     Node *prev_;
     vector<Node*> next_;
 
-    Node(std::function<void(Image&)> changeFunct, float value);
-    Node(std::function<void(Image&)> changeFunct, float value, Node *prev_);
-    void addChange(std::function<void(Image&)> changeFunct, float value);
+    Node(std::function<void(Image&, float)> changeFunct, float value);
+    Node(std::function<void(Image&, float)> changeFunct, float value, Node *prev_);
+    void addChange(std::function<void(Image&, float)> changeFunct, float value);
     Node* next(int index_of_next);
 
 
@@ -49,10 +49,10 @@ public:
         index_of_working_image.push_back(0);
         image_version = 1;
     };
-    void addNode(std::function<void(Image&)> changeFunct, float value);
+    void addNode(std::function<void(Image&, float)> changeFunct, float value);
 
     Image constructCurrImage();
-    vector<std::function<Image&>> vectorOfChanges();
+    vector<std::function<void(Image&, float)>> vectorOfChanges();
     void next_working_image();
 };
 
