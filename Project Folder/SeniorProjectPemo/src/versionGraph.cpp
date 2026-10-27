@@ -12,6 +12,10 @@ Node::Node(std::function<void(Image&)> changeFunct, float value, Node *prev){
     prev_ = prev;
 }
 
+Node* Node::next(int index_of_next){
+    return next_[index_of_next];
+}
+
 
 
 void Node::addChange(std::function<void(Image&)> changeFunct, float value){
@@ -20,8 +24,18 @@ void Node::addChange(std::function<void(Image&)> changeFunct, float value){
 
 }
 
-void VersionGraph::addNode(std::function<void(Image&)> changeFunct){
+void VersionGraph::addNode(std::function<void(Image&)> changeFunct, float value){
     //add the logic for separating branches
+    Node* curr = root_;
+
+    //going to the current working node
+    for(int i=0; i<index_of_working_image.size(); i++){
+        curr = curr -> next(index_of_working_image[i]);
+    }
+
+
+    curr -> next_.push_back(new Node(changeFunct, value));
+
 }
 
 Image constructCurrImage(){

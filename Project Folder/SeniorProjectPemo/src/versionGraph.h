@@ -15,15 +15,18 @@ private:
     //plan for the functions is that I don't specify the exact amount of parameters but I rather add them in as lambda functions
     std::function<void(Image&)> changeMade;
 
-    Node *prev_;
-    vector<Node*> next_;
+
     float changeValue;
 
 public:
 
+    Node *prev_;
+    vector<Node*> next_;
+
     Node(std::function<void(Image&)> changeFunct, float value);
     Node(std::function<void(Image&)> changeFunct, float value, Node *prev_);
     void addChange(std::function<void(Image&)> changeFunct, float value);
+    Node* next(int index_of_next);
 
 
 };
@@ -34,16 +37,23 @@ class VersionGraph{
 private:
     Node* start_;
     Node* curr_;
+    Node* root_;
 
     Image root_image;
     Image working_image;
+    vector<int> index_of_working_image;
+    int image_version;
 public:
 
-    VersionGraph(Image& img) : root_image(img), working_image(img) {};
-    void addNode(std::function<void(Image&)> changeFunct);
+    VersionGraph(Image& img) : root_image(img), working_image(img) {
+        index_of_working_image.push_back(0);
+        image_version = 1;
+    };
+    void addNode(std::function<void(Image&)> changeFunct, float value);
 
     Image constructCurrImage();
     vector<std::function<Image&>> vectorOfChanges();
+    void next_working_image();
 };
 
 
