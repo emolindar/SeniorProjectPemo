@@ -23,6 +23,7 @@ public:
     Node *prev_;
     vector<Node*> next_;
 
+    Node();
     Node(std::function<void(Image&, float)> changeFunct, float value);
     Node(std::function<void(Image&, float)> changeFunct, float value, Node *prev_);
     void addChange(std::function<void(Image&, float)> changeFunct, float value);
@@ -46,9 +47,14 @@ private:
 public:
 
     VersionGraph(Image& img) : root_image(img), working_image(img) {
-        index_of_working_image.push_back(0);
+        root_ = new Node();
+        curr_ = root_;
+        index_of_working_image.clear();
         image_version = 1;
     };
+
+    Image& getWorkingImage() {return working_image;}
+    Image& getRootImage() {return root_image;}
     void addNode(std::function<void(Image&, float)> changeFunct, float value);
 
     Image constructCurrImage();

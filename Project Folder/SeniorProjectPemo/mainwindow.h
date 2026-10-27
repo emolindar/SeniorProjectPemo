@@ -10,6 +10,7 @@
 #include <QSlider>
 #include "src/Image.h"
 #include "src/algorithms/dowscale.h"
+#include "src/versionGraph.h"
 #include <QWidget>
 #include <QVBoxLayout>
 
@@ -50,10 +51,9 @@ private:
 
     Ui::MainWindow *ui;
 
-    //the data structure that will hold the image versions will go here, going with vector for now, for ease
-    vector<Image> images;
+    //version graph structure, replacing placeholder vector structure from before
+    VersionGraph* graph = nullptr;
     vector<Image> previews;
-
 
     //my own functions (which should count towards the algorithms)
 
@@ -72,7 +72,7 @@ private:
     QRadioButton *bicubicDownscaling;
     QButtonGroup *downscalingButtonGroup;
 
-    std::function<Image(Image&, int,int,int)> downscalingFunction;
+    std::function<Image(Image&,int,int,int)> downscalingFunction;
 
     //in order to "connect" the updating slider with the function, I need to add it to its own group like this
 private slots:
