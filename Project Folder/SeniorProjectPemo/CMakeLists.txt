@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
+execute_process(COMMAND xcrun --show-sdk-path OUTPUT_VARIABLE CMAKE_OSX_SYSROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+
 project(SeniorProjectPemo VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)

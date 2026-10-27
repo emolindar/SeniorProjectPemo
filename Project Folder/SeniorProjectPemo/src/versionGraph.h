@@ -22,7 +22,7 @@ private:
 public:
 
     Node(std::function<void(Image&)> changeFunct, float value);
-    Node();
+    Node(std::function<void(Image&)> changeFunct, float value, Node *prev_);
     void addChange(std::function<void(Image&)> changeFunct, float value);
 
 
@@ -35,10 +35,11 @@ private:
     Node* start_;
     Node* curr_;
 
-    Image* root_image;
+    Image root_image;
+    Image working_image;
 public:
 
-    VersionGraph(Image& img);
+    VersionGraph(Image& img) : root_image(img), working_image(img) {};
     void addNode(std::function<void(Image&)> changeFunct);
 
     Image constructCurrImage();
