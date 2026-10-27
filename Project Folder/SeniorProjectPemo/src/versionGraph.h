@@ -5,6 +5,14 @@
 #include <functional>
 #include "image.h"
 
+
+/*TODO:
+ *
+ *  1. Think about adding a caching -- every however many nodes, have the version of the image saved
+ *  2. Complete the constructeImage function and make it so that every time a change is applied,
+ *   that change is added to the wokring_image through that, not by abusing that image.
+ */
+
 class Node{
 // each node contains only one change and it is relative to the previous node.
 

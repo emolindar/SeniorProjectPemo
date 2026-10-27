@@ -129,15 +129,15 @@ void MainWindow::onDownscalingChanged(){
 
 void MainWindow::applyExposureSlider(int slider_value, Image& edt, Image& og){
     float ex_value = slider_value/300.0f; // this value determines the amount of exposure change-- fine tune
-    graph -> addNode(exposure, ex_value);
-
+    edt = og;
+    exposure(edt, ex_value);
 }
 
 
-//TODO IN THE FOLLOWING METHODS:
-// MAKE SURE TO CHANGE THE DATA STRUCTURE USED TO STORE THE IMAGE
+
 void MainWindow::onExposureChange(int value){
-    applyExposureSlider(value, graph->getWorkingImage(), graph->getRootImage());
+    value = value / 300.0f;
+    graph->addNode(exposure, value);
     refreshDisplay();
 }
 
@@ -157,7 +157,7 @@ void MainWindow::applyModificationSlider(std::function<void(Image&, float)> func
 
 
 void MainWindow::onModificationChange(std::function<void(Image&, float)> func, float value){
-    graph->addNode(func, value);
+    graph->addNode(func, value/300.0f);
     refreshDisplay();
 }
 
