@@ -2,13 +2,10 @@
 #include <vector>
 
 void Pixel::setPixel(float r, float g, float b){
-        rgb_.clear();
-        this->rgb_ = {
-                       std::clamp(r, 0.0f, 1.0f),
-                       std::clamp(g, 0.0f, 1.0f),
-                       std::clamp(b, 0.0f, 1.0f)
-        };
-    }
+    r_ = r;
+    g_ =g;
+    b_ = b;
+}
 
 
 //constructors of Image

@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     //connecting the contrastSlider with the modified function but with the generalized method for applying modifications
     connect(contrastSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(contrast, value); });
     //doing the same for the contrast preview
-    connect(contrastSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange(contrast,contrastSlider->value());});
+    connect(contrastSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("contrast",contrast,contrastSlider->value());});
 
 
     //highlights
@@ -58,14 +58,14 @@ MainWindow::MainWindow(QWidget *parent)
     hightlightsSlider->setValue(0);
 
     connect(hightlightsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(highlights, value);});
-    connect(hightlightsSlider, &QSlider::sliderReleased, this, [this](){onModificationChange(highlights, hightlightsSlider->value());} );
+    connect(hightlightsSlider, &QSlider::sliderReleased, this, [this](){onModificationChange("highlights", highlights, hightlightsSlider->value());} );
 
     //shadows
     shadowsSlider->setRange(-300, 300);
     shadowsSlider->setValue(0);
 
     connect(shadowsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(shadows, value);});
-    connect(shadowsSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange(shadows, shadowsSlider->value());});
+    connect(shadowsSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("shadows", shadows, shadowsSlider->value());});
 
     //downscaling algorithm buttons choice
     averageDowncaling = new QRadioButton("Averaging pixel Values in a block of 4");
@@ -137,7 +137,7 @@ void MainWindow::applyExposureSlider(int slider_value, Image& edt, Image& og){
 
 void MainWindow::onExposureChange(int value){
     value = value / 300.0f;
-    graph->addNode(exposure, value);
+    graph->addNode("exposure", exposure, value);
     refreshDisplay();
 }
 
@@ -156,8 +156,8 @@ void MainWindow::applyModificationSlider(std::function<void(Image&, float)> func
 }
 
 
-void MainWindow::onModificationChange(std::function<void(Image&, float)> func, float value){
-    graph->addNode(func, value/300.0f);
+void MainWindow::onModificationChange(std::string name, std::function<void(Image&, float)> func, float value){
+    graph->addNode(name, func, value/300.0f);
     refreshDisplay();
 }
 

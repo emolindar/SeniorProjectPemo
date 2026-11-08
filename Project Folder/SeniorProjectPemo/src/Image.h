@@ -8,24 +8,25 @@ using namespace std;
 class Pixel{
 public:
 	Pixel(float red, float green, float blue){
-        rgb_[0]=std::clamp(red, 0.0f, 1.0f);
-        rgb_[1]=std::clamp(green, 0.0f, 1.0f);
-        rgb_[2]=std::clamp(blue, 0.0f, 1.0f);
+        r_=std::clamp(red, 0.0f, 1.0f);
+        g_=std::clamp(green, 0.0f, 1.0f);
+        b_=std::clamp(blue, 0.0f, 1.0f);
 	}
 
-	float red(){return rgb_[0];}
-	float green(){return rgb_[1];}
-	float blue(){return rgb_[2];}
+    float red(){return r_;}
+    float green(){return g_;}
+    float blue(){return b_;}
 	
-	void red(float r){rgb_[0]= r;}
-	void blue(float b){rgb_[2]=b;}
-	void green(float g){rgb_[1]=g;}
-	void rgb(vector<float> rgb){rgb_ = rgb;}
+    void red(float r){r_= r;}
+    void blue(float b){b_=b;}
+    void green(float g){g_=g;}
+
+
 
     void setPixel(float r, float g, float b);
 private:
     //starting out with a black image ( and initial values, so that those can be changed later on)
-	vector<float> rgb_ = {0,0,0}; 
+    float r_ = 0, g_ = 0, b_= 0;
 };
 
 
