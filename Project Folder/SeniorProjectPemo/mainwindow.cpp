@@ -38,9 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
     exposureSlider->setValue(0);
 
     //this makes it so that the function onExposureChange is called when the value of the slider is changed
-    connect(exposureSlider, &QSlider::valueChanged, this, &MainWindow::onExposureChangePreview);
+    connect(exposureSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(exposure, value); });
 
-    connect(exposureSlider, &QSlider::sliderReleased, this, [this]() {onExposureChange(exposureSlider->value());});
+    connect(exposureSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("exposure", exposure, exposureSlider->value());});
     //^ need to add lambda function which can grab the exposure slider value and then call the on exposure change function
 
     //attempting to add the contrast slider with the generalized function
@@ -149,7 +149,7 @@ void MainWindow::applyModificationSlider(std::function<void(Image&, float)> func
     //attempting to generalize the method to apply a change
 
     float value = slider_value/300.0f;
-    edt = og;
+    edt = graph->constructCurrImage();
     func(edt, value);
 }
 
@@ -178,7 +178,7 @@ void MainWindow::refreshDisplay(){
 }
 
 void MainWindow::refreshDisplayPreview(){
-    QImage output = ImagetoQ(downscalingFunction(graph->getWorkingImage(),150,200, 16));
+    QImage output = ImagetoQ(previews[1]);
     output = output.scaled(
         graph->getRootImage().width(),
         graph->getRootImage().height(),
