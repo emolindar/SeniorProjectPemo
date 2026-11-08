@@ -129,15 +129,13 @@ void MainWindow::onDownscalingChanged(){
 
 void MainWindow::applyExposureSlider(int slider_value, Image& edt, Image& og){
     float ex_value = slider_value/300.0f; // this value determines the amount of exposure change-- fine tune
-    edt = og;
-    exposure(edt, ex_value);
+    graph->addNode("exposure", exposure, ex_value);
 }
 
 
 
 void MainWindow::onExposureChange(int value){
-    value = value / 300.0f;
-    graph->addNode("exposure", exposure, value);
+    graph->addNode("exposure", exposure, value/300.0f);
     refreshDisplay();
 }
 
@@ -180,7 +178,7 @@ void MainWindow::refreshDisplay(){
 }
 
 void MainWindow::refreshDisplayPreview(){
-    QImage output = ImagetoQ(previews[1]);
+    QImage output = ImagetoQ(downscalingFunction(graph->getWorkingImage(),150,200, 16));
     output = output.scaled(
         graph->getRootImage().width(),
         graph->getRootImage().height(),

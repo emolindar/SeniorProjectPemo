@@ -79,8 +79,8 @@ private slots:
     void onExposureChange(int value);
     void onExposureChangePreview(int value);
 
-    void onModificationChange(std::string name, std::function<void(Image&, float)> func, float value);
-    void onModificationChangePreview(std::function<void(Image&, float)> func, float value);
+    void onModificationChange(std::string name, std::function<void (Image &, float)> func, float value);
+    void onModificationChangePreview(std::function<void (Image&, float)> func, float value);
 
     void onDownscalingChanged();
 
