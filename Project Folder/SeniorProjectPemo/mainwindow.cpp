@@ -80,10 +80,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(downscalingButtonGroup, &QButtonGroup::buttonClicked, this, &MainWindow::onDownscalingChanged);
 
 
-
-    previews.push_back(downscalingFunction(graph->getWorkingImage(),150,200,16));
-    previews.push_back(downscalingFunction(graph->getWorkingImage(),150,200,16));
-
     QImage img_output = ImagetoQ(graph->getWorkingImage());
     img_output = img_output.scaled(
         img.width(),
@@ -116,15 +112,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::onDownscalingChanged(){
     //set the function for the downscaling algorithm
-    if(averageDowncaling -> isChecked()){
-        downscalingFunction = downscale_image;
-    }else if(bicubicDownscaling -> isChecked()){
-        downscalingFunction = downscale_image_bicubic;
-    }
 
-    //placeholder until I create the version graph
-    previews[0] = downscalingFunction(graph->getRootImage(), 150,200, 16);
-    previews[1] = downscalingFunction(graph-> getWorkingImage(), 150, 200, 16);
+
+    //CURRENTLY USELESS, CREATE MECHANISM IN VERSIONGRAPH TO SUPPORT THIS
 }
 
 
@@ -139,8 +129,9 @@ void MainWindow::onModificationChange(std::string name, std::function<void(Image
 }
 
 void MainWindow::onModificationChangePreview(std::function<void(Image&, float)> func, float value){
-    graph -> updatePreview(func, value);
+    graph -> updatePreview(func, value/300.0f);
     refreshDisplayPreview();
+    graph -> refreshPreview();
 }
 
 

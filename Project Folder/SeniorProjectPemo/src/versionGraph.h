@@ -48,7 +48,7 @@ private:
     Image root_image;
     Image working_image;
 
-    Image preview;
+    Image preview, preview_before_slider;
     int preview_width, preview_height, interpolation_radius;
 
     std::function<Image( Image&, int,int,int)> downscaling_function_; // default downscaling function is going to be the Lanczos interpolation
@@ -56,12 +56,18 @@ private:
     int image_version;
 
 public:
-    VersionGraph(Image &img) : root_image(img), working_image(img), preview(downscale_image_bicubic(img, 150,200, 16)){
+    VersionGraph(Image &img) : root_image(img), working_image(img), preview(downscale_image_bicubic(img, 150,200, 16)), preview_before_slider(downscale_image_bicubic(img, 150,200, 16)){
         root_ = new Node();
         curr_ = root_;
         index_of_working_image.clear();
         image_version = 1;
         downscaling_function_ = downscale_image_bicubic;
+
+
+        //add functionality to change these
+        preview_width = 150;
+        preview_height = 150;
+        interpolation_radius = 16;
     };
 
     std::function<Image(Image&, int,int, int)> downscaling_function() { return downscaling_function_;}
@@ -74,7 +80,7 @@ public:
     //functions for preview
     Image& getPreview(){ return preview; }
     void updatePreview( std::function<void(Image&, float)> adjustment_func, float value);
-    void refreshPreview() { preview = downscaling_function_(getWorkingImage(), preview_width, preview_height, interpolation_radius);}
+    void refreshPreview() { preview = preview_before_slider;}
 
 
     Image constructCurrImage();

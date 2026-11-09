@@ -50,6 +50,7 @@ void VersionGraph::set_downscaling_function(std::function<Image(Image&, int,int,
     downscaling_function_ = func;
     Image temp = getWorkingImage();
     preview = downscaling_function_(temp, 150, 200, 16);
+    preview_before_slider = preview;
 }
 
 void VersionGraph::updatePreview(std::function<void(Image&, float)> adjustment_func, float value){
@@ -110,6 +111,8 @@ Image VersionGraph::constructCurrImage(){
         unique_functs[i](result, unique_functs_values[i]);
     }
 
+    preview = downscaling_function_(result, preview_width, preview_height, interpolation_radius);
+    preview_before_slider = preview;
     return result;
 }
 
