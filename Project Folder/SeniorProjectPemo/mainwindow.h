@@ -9,7 +9,6 @@
 #include <QImage>
 #include <QSlider>
 #include "src/Image.h"
-#include "src/algorithms/dowscale.h"
 #include "src/versionGraph.h"
 #include <QWidget>
 #include <QVBoxLayout>
@@ -79,8 +78,5 @@ private:
     void onModificationChangePreview(std::function<void (Image&, float)> func, float value);
 
     void onDownscalingChanged();
-
-
-
 };
 #endif // MAINWINDOW_H

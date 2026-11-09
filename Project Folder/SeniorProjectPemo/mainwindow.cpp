@@ -117,11 +117,6 @@ void MainWindow::onDownscalingChanged(){
     //CURRENTLY USELESS, CREATE MECHANISM IN VERSIONGRAPH TO SUPPORT THIS
 }
 
-
-
-
-
-
 void MainWindow::onModificationChange(std::string name, std::function<void(Image&, float)> func, float value){
     graph->addNode(name, func, value/300.0f);
     refreshDisplay();
@@ -133,8 +128,6 @@ void MainWindow::onModificationChangePreview(std::function<void(Image&, float)> 
     refreshDisplayPreview();
     graph -> refreshPreview();
 }
-
-
 
 void MainWindow::refreshDisplay(){
     QImage output = ImagetoQ(graph->getWorkingImage());
