@@ -74,13 +74,9 @@ private:
 
     std::function<Image(Image&,int,int,int)> downscalingFunction;
 
-    //in order to "connect" the updating slider with the function, I need to add it to its own group like this
-private slots:
     void onExposureChange(int value);
     void onExposureChangePreview(int value);
 
-    void onModificationChange(std::string name, std::function<void (Image &, float)> func, float value);
-    void onModificationChangePreview(std::function<void (Image&, float)> func, float value);
 
     void onDownscalingChanged();
 

@@ -34,6 +34,32 @@ void Node::addChange(std::function<void(Image&, float)> changeFunct, float value
 
 }
 
+//Version graph functions
+
+Image& VersionGraph::getWorkingImage(){
+    //returns the working image(i.e. the latest edited image), so it needs to be constructed to be up to date
+    working_image = constructCurrImage();
+    return working_image;
+}
+
+
+void VersionGraph::set_downscaling_function(std::function<Image(Image&, int,int, int)> func){
+    //changing the downscaling function ( when the radio button is selected)
+    //need to 'refresh' the downscaling_function_ variable and then also
+    //need to refersh the preview image as well
+    downscaling_function_ = func;
+    Image temp = getWorkingImage();
+    preview = downscaling_function_(temp, 150, 200, 16);
+}
+
+void VersionGraph::updatePreview(std::function<void(Image&, float)> adjustment_func, float value){
+    //this is like a setter for preview
+    //idea is that i will use this to perform the live updates
+    //need to remember to make a refresh function which sets it to a downscaled version of the workign image
+
+    adjustment_func(preview, value);
+}
+
 void VersionGraph::addNode(std::string name, std::function<void(Image&, float)> changeFunct, float value){
 
     Node* newNode = new Node(name, changeFunct, value, curr_);

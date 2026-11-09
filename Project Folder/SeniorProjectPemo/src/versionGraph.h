@@ -2,6 +2,7 @@
 #define VERSIONGRAPH_H
 
 #include "Image.h"
+#include "algorithms/dowscale.h"
 #include <functional>
 #include <vector>
 
@@ -9,9 +10,6 @@
  *
  *  1. Think about adding a caching -- every however many nodes, have the
  * version of the image saved
- *  2. Complete the constructeImage function and make it so that every time a
- * change is applied, that change is added to the wokring_image through that,
- * not by abusing that image.
  */
 
 class Node {
@@ -22,8 +20,7 @@ private:
     // the idea is that each node will simply hold the changes made to the image,
     // not a whole image
 
-    // plan for the functions is that I don't specify the exact amount of
-    // parameters but I rather add them in as lambda functions
+    //store changes as function pointers
     std::function<void(Image &, float)> changeMade;
     float changeValue;
     std::string name;
@@ -50,20 +47,35 @@ private:
 
     Image root_image;
     Image working_image;
+
+    Image preview;
+    int preview_width, preview_height, interpolation_radius;
+
+    std::function<Image( Image&, int,int,int)> downscaling_function_; // default downscaling function is going to be the Lanczos interpolation
     vector<int> index_of_working_image;
     int image_version;
 
 public:
-    VersionGraph(Image &img) : root_image(img), working_image(img) {
+    VersionGraph(Image &img) : root_image(img), working_image(img), preview(downscale_image_bicubic(img, 150,200, 16)){
         root_ = new Node();
         curr_ = root_;
         index_of_working_image.clear();
         image_version = 1;
+        downscaling_function_ = downscale_image_bicubic;
     };
 
-    Image &getWorkingImage() { return working_image; }
+    std::function<Image(Image&, int,int, int)> downscaling_function() { return downscaling_function_;}
+    void set_downscaling_function(std::function<Image(Image&, int,int, int)> func);
+
+    Image &getWorkingImage();
     Image &getRootImage() { return root_image; }
     void addNode(std::string name, std::function<void(Image &, float)> changeFunct, float value);
+
+    //functions for preview
+    Image& getPreview(){ return preview; }
+    void updatePreview( std::function<void(Image&, float)> adjustment_func, float value);
+    void refreshPreview() { preview = downscaling_function_(getWorkingImage(), preview_width, preview_height, interpolation_radius);}
+
 
     Image constructCurrImage();
     vector<std::function<void(Image &, float)>> vectorOfChanges();
