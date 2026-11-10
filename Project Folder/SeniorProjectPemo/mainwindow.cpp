@@ -10,11 +10,15 @@
 #include <QSlider>
 
 
+#include <QFileDialog>
+#include <QImageReader>
+#include <QMessageBox>
+
+
 /*TODO
 
 -> add a way to export the image at the end
-
-->  start thinking about optimizing all the functions, most just have a O(n^2)
+-> fix the way the downscaling is incorporated -- with high resolution images, app lags too much and it isn't shown properly
 */
 
 
@@ -23,15 +27,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
 
-    QString path = "/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg";
-    QImage loaded(path);
-    if(loaded.isNull()){
-        std::cout << "Error" << std::endl;
-        return; 
-    }
-
-    Image img = QtoImage(loaded);
-    graph = new VersionGraph(img);
 
     //testing exposure
     exposureSlider->setRange(-300, 300);
@@ -80,44 +75,59 @@ MainWindow::MainWindow(QWidget *parent)
     connect(downscalingButtonGroup, &QButtonGroup::buttonClicked, this, &MainWindow::onDownscalingChanged);
 
 
-    QImage img_output = ImagetoQ(graph->getWorkingImage());
-    img_output = img_output.scaled(
-        img.width(),
-        img.height(),
-        Qt::KeepAspectRatio,
-        Qt::SmoothTransformation);
-    image_viewer->setPixmap(QPixmap::fromImage(img_output));
+
 
     //setting starting values to the History Label
     historyTextBox -> setReadOnly(true);
-    historyTextBox -> setPlainText(QString::fromStdString(graph->history()));
+    historyTextBox -> setPlainText("");
 
     //QPixmap pix("/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg");
     //image_viewer->setPixmap(pix);
-    splitter->addWidget(image_viewer);
+    splitterEditor->addWidget(image_viewer);
 
-    panelLayout->addWidget(averageDowncaling);
-    panelLayout->addWidget(bicubicDownscaling);
-    panelLayout->addWidget(exposureLabel);
-    panelLayout->addWidget(exposureSlider);
-    panelLayout->addWidget(contrastLabel);
-    panelLayout->addWidget(contrastSlider);
-    panelLayout->addWidget(hightlightsLabel);
-    panelLayout->addWidget(hightlightsSlider);
-    panelLayout->addWidget(shadowsLabel);
-    panelLayout->addWidget(shadowsSlider);
+    adjustmentsPanelLayout->addWidget(averageDowncaling);
+    adjustmentsPanelLayout->addWidget(bicubicDownscaling);
+    adjustmentsPanelLayout->addWidget(exposureLabel);
+    adjustmentsPanelLayout->addWidget(exposureSlider);
+    adjustmentsPanelLayout->addWidget(contrastLabel);
+    adjustmentsPanelLayout->addWidget(contrastSlider);
+    adjustmentsPanelLayout->addWidget(hightlightsLabel);
+    adjustmentsPanelLayout->addWidget(hightlightsSlider);
+    adjustmentsPanelLayout->addWidget(shadowsLabel);
+    adjustmentsPanelLayout->addWidget(shadowsSlider);
 
-    panelLayout->addWidget(historyTextBox, 1);
-    panelLayout->addStretch();
+    adjustmentsPanelLayout->addWidget(historyTextBox, 1);
+    adjustmentsPanelLayout->addStretch();
 
-    splitter->addWidget(panel);
+    splitterEditor->addWidget(adjustmentsPanel);
+
+
+    //setting things up for the graph tab
 
     graphTextBox->setReadOnly(true);
     graphTextBox->setPlainText("Version Graph Visualizer");
 
+    graphPanelLayout -> addWidget(graphTextBox);
+
+    //setting things up for the Image import tab
+
+
+
+    imageInfoLabel-> setAlignment(Qt::AlignCenter);
+    previewLabel -> setAlignment(Qt::AlignCenter);
+    imageSelectLayout -> addWidget(importButton);
+
+    connect(importButton, &QPushButton::clicked, this, &MainWindow::importImage);
+    imageSelectLayout->addWidget(imageInfoLabel);
+    imageSelectLayout->addWidget(previewLabel,1);
+
+    adjustmentsPanel -> setEnabled(false);
+
     //structuring all of the widgets into tabs
-    tabs->addTab(splitter, "Editor");
-    tabs->addTab(graphTextBox, "Version Graph");
+    tabs->addTab(imageSelectPage, "Image Select");
+    tabs->addTab(splitterEditor, "Editor");
+    tabs->addTab(graphPanel, "Version Graph");
+
 
     setCentralWidget(tabs);
 }
@@ -132,21 +142,19 @@ void MainWindow::onDownscalingChanged(){
 void MainWindow::onModificationChange(std::string name, std::function<void(Image&, float)> func, float value){
     graph->addNode(name, func, value/300.0f);
     refreshDisplay();
-    graph->refreshPreview();
 }
 
 void MainWindow::onModificationChangePreview(std::function<void(Image&, float)> func, float value){
     graph -> updatePreview(func, value/300.0f);
     refreshDisplayPreview();
-    graph -> refreshPreview();
 }
 
 void MainWindow::refreshDisplay(){
     QImage output = ImagetoQ(graph->getWorkingImage());
     //adding a scaling so that the image is always the same size, no matter the resolution it has. Will make this dynamic in the future
     output = output.scaled(
-                       graph->getRootImage().width(),
-                       graph->getRootImage().height(),
+                       800,
+                       600,
                        Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
@@ -157,11 +165,37 @@ void MainWindow::refreshDisplay(){
 void MainWindow::refreshDisplayPreview(){
     QImage output = ImagetoQ(graph-> getPreview());
     output = output.scaled(
-        graph->getRootImage().width(),
-        graph->getRootImage().height(),
+        800,
+        600,
         Qt::IgnoreAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
+}
+
+void MainWindow::importImage(){
+
+    QString path = QFileDialog::getOpenFileName(this, "Import Image", QString());
+    if(path.isEmpty()) return;
+
+    QImageReader reader(path);
+    QImage  loaded = reader.read();
+
+    //error checking
+    if(loaded.isNull()){
+        QMessageBox::warning(this, "import failed", reader.errorString());
+        return;
+    }
+
+    Image img = QtoImage(loaded);
+    delete graph;
+    graph = new VersionGraph(img);
+
+    refreshDisplay();
+
+
+    imageInfoLabel -> setText(QString::fromStdString(QFileInfo(path).fileName().toStdString() + "\n" + to_string(loaded.width()) + "\n" + to_string(loaded.height())));
+    previewLabel->setPixmap(QPixmap::fromImage(loaded.scaled(400,300, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+    adjustmentsPanel -> setEnabled(true);
 }
 
 

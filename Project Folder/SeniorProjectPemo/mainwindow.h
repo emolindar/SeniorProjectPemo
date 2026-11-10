@@ -14,6 +14,7 @@
 #include <QVBoxLayout>
 #include <QPlainTextEdit>
 #include <QTabWidget>
+#include <QPushButton>
 
 //choosing which downscaling algorithm is used
 #include <QRadioButton>
@@ -36,11 +37,21 @@ public:
 
 private:
     QTabWidget *tabs = new QTabWidget();
-    QSplitter *splitter = new QSplitter();
+
+
+//Editor tab ---------------------------------------------------------------
+    QSplitter *splitterEditor = new QSplitter();
     QListView *listview = new QListView;
     QLabel *image_viewer = new QLabel;
-    QWidget *panel = new QWidget();
-    QVBoxLayout *panelLayout = new QVBoxLayout(panel);
+    QWidget *adjustmentsPanel = new QWidget();
+    QVBoxLayout *adjustmentsPanelLayout = new QVBoxLayout(adjustmentsPanel);
+
+
+    //widgets needed in order to choose which downscaling algorithm is used
+    QRadioButton *averageDowncaling;
+    QRadioButton *bicubicDownscaling;
+    QButtonGroup *downscalingButtonGroup;
+
 
     QLabel *exposureLabel = new QLabel("Exposure", this);
     QSlider *exposureSlider = new QSlider(Qt::Horizontal);
@@ -51,37 +62,40 @@ private:
     QLabel *shadowsLabel = new QLabel("Shadows",this);
     QSlider *shadowsSlider = new QSlider(Qt::Horizontal);
     QPlainTextEdit *historyTextBox = new QPlainTextEdit();
-    QPlainTextEdit *graphTextBox = new QPlainTextEdit();
-
-    Ui::MainWindow *ui;
-
-    //version graph structure, replacing placeholder vector structure from before
-    VersionGraph* graph = nullptr;
-    vector<Image> previews;
 
     //my own functions (which should count towards the algorithms)
 
     //refresh function
-
     void refreshDisplay();
     void refreshDisplayPreview();
-    //exposure
-    void applyExposureSlider(int slider_value, Image& edt, Image& og);
-
-    void applyModificationSlider(std::function<void(Image&, float)> func, int slider_value, Image& edt, Image& og);
-
-
-    //widgets needed in order to choose which downscaling algorithm is used
-    QRadioButton *averageDowncaling;
-    QRadioButton *bicubicDownscaling;
-    QButtonGroup *downscalingButtonGroup;
 
     std::function<Image(Image&,int,int,int)> downscalingFunction;
-
 
     void onModificationChange(std::string name, std::function<void (Image &, float)> func, float value);
     void onModificationChangePreview(std::function<void (Image&, float)> func, float value);
 
     void onDownscalingChanged();
+
+//GraphVersion tab ---------------------------------------------------------------------
+    QWidget *graphPanel = new QWidget();
+    QVBoxLayout *graphPanelLayout = new QVBoxLayout(graphPanel);
+    QPlainTextEdit *graphTextBox = new QPlainTextEdit();
+
+
+//Image Select tab ------------------------------------------------------------------------
+    QWidget *imageSelectPage = new QWidget();
+    QVBoxLayout *imageSelectLayout = new QVBoxLayout(imageSelectPage);
+    QPushButton *importButton = new QPushButton("Import Image");
+    QLabel *imageInfoLabel = new QLabel("No Image Loaded");
+    QLabel *previewLabel = new QLabel();
+    Ui::MainWindow *ui;
+
+    //version graph structure, replacing placeholder vector structure from before
+    VersionGraph* graph = nullptr;
+
+
+private slots:
+    //this is necessary for the importing of images
+    void importImage();
 };
 #endif // MAINWINDOW_H

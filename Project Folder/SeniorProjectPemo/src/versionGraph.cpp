@@ -57,7 +57,7 @@ void VersionGraph::updatePreview(std::function<void(Image&, float)> adjustment_f
     //this is like a setter for preview
     //idea is that i will use this to perform the live updates
     //need to remember to make a refresh function which sets it to a downscaled version of the workign image
-
+    preview=preview_before_slider;
     adjustment_func(preview, value);
 }
 
@@ -133,6 +133,40 @@ std::string VersionGraph::history(){
         n = n-> prev_;
         counter++;
     }
+
+    return result;
+}
+
+Image VersionGraph::constructExportImage(){
+    //returns the full scale resolution image with the final adjustments applied
+    //function follows all the same logic as constructCurrImage();
+    std::vector<Node*> path;
+
+    Node* n= curr_;
+    while(n != nullptr && n!= root_){
+        path.push_back(n);
+        n = n->prev_;
+    }
+
+    //adding mechanism to make sure that the same slider doesn't get stacked on top of each other
+    std::set<std::string> slider_applied; // collection of sliders that have been changed
+    std::vector<std::function<void(Image&, float)>> unique_functs; // collection of functions to apply
+    std::vector<float> unique_functs_values;
+    for(int i=0; i< path.size(); i++){
+        if(slider_applied.count(path[i]->name) == 0){
+            slider_applied.insert(path[i] -> name);
+            unique_functs.push_back(path[i] -> changeMade);
+            unique_functs_values.push_back(path[i] -> changeValue);
+        }
+    }
+
+    Image result(full_scale_image);
+
+
+    for(int i=unique_functs.size(); i>0; i--){
+        unique_functs[i](result, unique_functs_values[i]);
+    }
+
 
     return result;
 }
