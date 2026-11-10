@@ -88,7 +88,9 @@ MainWindow::MainWindow(QWidget *parent)
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(img_output));
 
-
+    //setting starting values to the History Label
+    historyLabel -> setReadOnly(true);
+    historyLabel -> setPlainText(QString::fromStdString(graph->history()));
 
     //QPixmap pix("/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg");
     //image_viewer->setPixmap(pix);
@@ -104,6 +106,7 @@ MainWindow::MainWindow(QWidget *parent)
     panelLayout->addWidget(hightlightsSlider);
     panelLayout->addWidget(shadowsLabel);
     panelLayout->addWidget(shadowsSlider);
+    panelLayout->addWidget(historyLabel, 1);
     panelLayout->addStretch();
     splitter->addWidget(panel);
     setCentralWidget(splitter);
@@ -138,6 +141,8 @@ void MainWindow::refreshDisplay(){
                        Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
+
+    historyLabel -> setPlainText(QString::fromStdString(graph -> history()));
 }
 
 void MainWindow::refreshDisplayPreview(){

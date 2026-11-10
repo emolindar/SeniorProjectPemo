@@ -84,8 +84,10 @@ public:
 
 
     Image constructCurrImage();
-    vector<std::function<void(Image &, float)>> vectorOfChanges();
     void next_working_image();
+
+
+    std::string history();
 };
 
 #endif // VERSIONGRAPH_H

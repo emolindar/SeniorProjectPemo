@@ -12,6 +12,7 @@
 #include "src/versionGraph.h"
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QPlainTextEdit>
 
 //choosing which downscaling algorithm is used
 #include <QRadioButton>
@@ -47,6 +48,7 @@ private:
     QSlider *hightlightsSlider = new QSlider(Qt::Horizontal);
     QLabel *shadowsLabel = new QLabel("Shadows",this);
     QSlider *shadowsSlider = new QSlider(Qt::Horizontal);
+    QPlainTextEdit *historyLabel = new QPlainTextEdit();
 
     Ui::MainWindow *ui;
 

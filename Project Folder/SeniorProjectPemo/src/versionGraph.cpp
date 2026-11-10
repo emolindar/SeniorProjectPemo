@@ -1,5 +1,5 @@
 #include "versionGraph.h"
-
+#include <string>
 #include <set>
 
 Node::Node(){
@@ -116,3 +116,23 @@ Image VersionGraph::constructCurrImage(){
     return result;
 }
 
+std::string VersionGraph::history(){
+    /*returns a string that represent the
+     * history of edits for the current working image
+    */
+
+
+    std::string result = "\nEdit History\n\n";
+    std::vector<Node*> result_path;
+
+    Node* n = curr_;
+    int counter = 1;
+    while(n!= nullptr && n!= root_){
+        result_path.push_back(n);
+        result= result + to_string(counter) + " " +  n->name + " " + to_string(n->changeValue) + "\n";
+        n = n-> prev_;
+        counter++;
+    }
+
+    return result;
+}
