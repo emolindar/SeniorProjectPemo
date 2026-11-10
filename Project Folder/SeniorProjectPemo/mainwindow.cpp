@@ -121,32 +121,27 @@ MainWindow::MainWindow(QWidget *parent)
     imageSelectLayout->addWidget(previewLabel,1);
 
     adjustmentsPanel -> setEnabled(false);
-
+    QLabel *preveiwDimensionsLabel = new QLabel("Change the preview image dimensions(if application lagging or you desire different results);");
+    imageSelectLayout -> addWidget(preveiwDimensionsLabel);
     QHBoxLayout *previewWidthInputLayout = new QHBoxLayout();
     previewWidthInputLayout -> addWidget(previewWidthInputLabel);
     previewWidthInputLayout -> addWidget(previewWidthInput);
 
     imageSelectLayout -> addLayout(previewWidthInputLayout);
 
-    QHBoxLayout *previewHeightInputLayout = new QHBoxLayout();
-    previewHeightInputLayout -> addWidget(previewHeightInputLabel);
-    previewHeightInputLayout -> addWidget(previewHeightInput);
-
-    imageSelectLayout -> addLayout(previewHeightInputLayout);
 
     imageSelectLayout -> addWidget(applyPreviewDimensions);
 
     connect(applyPreviewDimensions, &QPushButton::clicked, this, [this]() {
         if(graph){
             int w = previewWidthInput -> text().toInt();
-            int h = previewHeightInput -> text().toInt();
 
-            if(w>0 && h > 0 && w<800 && h <600){
-                graph -> setPreviewDimensions(w,h);
+
+            if(w>0  && w<800 ){
+                graph -> setPreviewDimensions(w);
 
                 graph -> getWorkingImage();
 
-                refreshDisplayPreview();
             }
         }
     });

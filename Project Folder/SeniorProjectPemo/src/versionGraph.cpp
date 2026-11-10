@@ -46,9 +46,11 @@ void VersionGraph::set_downscaling_function(std::function<Image(Image&, int,int,
     //changing the downscaling function ( when the radio button is selected)
     //need to 'refresh' the downscaling_function_ variable and then also
     //need to refersh the preview image as well
+
+
     downscaling_function_ = func;
     Image temp = getWorkingImage();
-    preview = downscaling_function_(temp, 150, 200, 16);
+    preview = downscaling_function_(temp, preview_width, preview_height, 16);
     preview_before_slider = preview;
 }
 
@@ -170,7 +172,7 @@ Image VersionGraph::constructExportImage(){
     return result;
 }
 
-void VersionGraph::setPreviewDimensions(int w, int h){
+void VersionGraph::setPreviewDimensions(int w){
     preview_width = w;
-    preview_height = h;
+    preview_height = w/aspect_ratio;
 }

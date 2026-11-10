@@ -45,6 +45,7 @@ private:
     Node *curr_;
     Node *root_;
 
+    float aspect_ratio;
     Image full_scale_image; //stores full scale resolution image
     Image root_image; // stores a downscaled( to the boundaries of the app
     Image working_image; // stores a downscaled preview image
@@ -52,17 +53,24 @@ private:
     Image preview, preview_before_slider;
     int preview_width, preview_height, interpolation_radius;
 
+
     std::function<Image( Image&, int,int,int)> downscaling_function_; // default downscaling function is going to be the Lanczos interpolation
     vector<int> index_of_working_image;
     int image_version;
 
+    //helper to calc ratio(aspect ratio of og image)
+
+
 public:
     VersionGraph(Image &img) :
         full_scale_image(img),
-        root_image(downscale_image_bicubic(img, 800, 600, 16)),
+
+        aspect_ratio((float)img.width()/(float)img.height()),
+        root_image(downscale_image_bicubic(img, 800, 800/aspect_ratio, 16)),
         working_image(root_image),
-        preview(downscale_image_bicubic(root_image, 150, 200, 16)),
+        preview(downscale_image_bicubic(root_image, 800, 800/aspect_ratio, 16)),
         preview_before_slider(preview){
+
         root_ = new Node();
         curr_ = root_;
         index_of_working_image.clear();
@@ -71,8 +79,9 @@ public:
 
 
         //add functionality to change these
+
         preview_width = 800;
-        preview_height = 600;
+        preview_height = preview_width/aspect_ratio;
         interpolation_radius = 16;
     };
 
@@ -87,7 +96,7 @@ public:
     Image& getPreview(){ return preview; }
     void updatePreview( std::function<void(Image&, float)> adjustment_func, float value);
     void refreshPreview() { preview = preview_before_slider;}
-    void setPreviewDimensions(int w, int h);
+    void setPreviewDimensions(int w);
 
     Image constructCurrImage();
     void next_working_image();
