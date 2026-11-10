@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include <iostream>
 #include "src/Image.h"
 #include "src/imageconverter.h"
 #include "src/algorithms/exposure.h"
@@ -123,6 +122,34 @@ MainWindow::MainWindow(QWidget *parent)
 
     adjustmentsPanel -> setEnabled(false);
 
+    QHBoxLayout *previewWidthInputLayout = new QHBoxLayout();
+    previewWidthInputLayout -> addWidget(previewWidthInputLabel);
+    previewWidthInputLayout -> addWidget(previewWidthInput);
+
+    imageSelectLayout -> addLayout(previewWidthInputLayout);
+
+    QHBoxLayout *previewHeightInputLayout = new QHBoxLayout();
+    previewHeightInputLayout -> addWidget(previewHeightInputLabel);
+    previewHeightInputLayout -> addWidget(previewHeightInput);
+
+    imageSelectLayout -> addLayout(previewHeightInputLayout);
+
+    imageSelectLayout -> addWidget(applyPreviewDimensions);
+
+    connect(applyPreviewDimensions, &QPushButton::clicked, this, [this]() {
+        if(graph){
+            int w = previewWidthInput -> text().toInt();
+            int h = previewHeightInput -> text().toInt();
+
+            if(w>0 && h > 0 && w<800 && h <600){
+                graph -> setPreviewDimensions(w,h);
+
+                graph -> getWorkingImage();
+
+                refreshDisplayPreview();
+            }
+        }
+    });
     //structuring all of the widgets into tabs
     tabs->addTab(imageSelectPage, "Image Select");
     tabs->addTab(splitterEditor, "Editor");
@@ -173,7 +200,9 @@ void MainWindow::refreshDisplayPreview(){
 }
 
 void MainWindow::importImage(){
-
+    /*function that opens a file explorer page and gets the path of a selected image.
+    * after the image is received, it is shown in a preview window
+    */
     QString path = QFileDialog::getOpenFileName(this, "Import Image", QString());
     if(path.isEmpty()) return;
 

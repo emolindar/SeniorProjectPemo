@@ -87,7 +87,7 @@ public:
     Image& getPreview(){ return preview; }
     void updatePreview( std::function<void(Image&, float)> adjustment_func, float value);
     void refreshPreview() { preview = preview_before_slider;}
-
+    void setPreviewDimensions(int w, int h);
 
     Image constructCurrImage();
     void next_working_image();

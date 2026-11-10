@@ -15,6 +15,8 @@
 #include <QPlainTextEdit>
 #include <QTabWidget>
 #include <QPushButton>
+#include <QLineEdit>
+
 
 //choosing which downscaling algorithm is used
 #include <QRadioButton>
@@ -88,6 +90,15 @@ private:
     QPushButton *importButton = new QPushButton("Import Image");
     QLabel *imageInfoLabel = new QLabel("No Image Loaded");
     QLabel *previewLabel = new QLabel();
+
+
+    QLabel *previewWidthInputLabel = new QLabel("Desired preview width: ");
+    QLineEdit *previewWidthInput = new QLineEdit("400");
+    QLabel *previewHeightInputLabel = new QLabel("Desired preview height: ");
+    QLineEdit *previewHeightInput = new QLineEdit("200");
+    QPushButton *applyPreviewDimensions = new QPushButton("Apply new preview dimensions.");
+
+
     Ui::MainWindow *ui;
 
     //version graph structure, replacing placeholder vector structure from before

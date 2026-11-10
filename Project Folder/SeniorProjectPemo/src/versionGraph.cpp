@@ -37,8 +37,7 @@ void Node::addChange(std::function<void(Image&, float)> changeFunct, float value
 //Version graph functions
 
 Image& VersionGraph::getWorkingImage(){
-    //returns the working image(i.e. the latest edited image), so it needs to be constructed to be up to date
-    working_image = constructCurrImage();
+    //returns the working image(i.e. the latest edited image)
     return working_image;
 }
 
@@ -107,7 +106,7 @@ Image VersionGraph::constructCurrImage(){
     }
 
     Image result(root_image);
-    for(int i=0; i<unique_functs.size(); i++){
+    for(int i = unique_functs.size() -1; i >= 0 ; i--){
         unique_functs[i](result, unique_functs_values[i]);
     }
 
@@ -163,10 +162,15 @@ Image VersionGraph::constructExportImage(){
     Image result(full_scale_image);
 
 
-    for(int i=unique_functs.size(); i>0; i--){
+    for(int i=unique_functs.size() - 1; i>=0; i--){
         unique_functs[i](result, unique_functs_values[i]);
     }
 
 
     return result;
+}
+
+void VersionGraph::setPreviewDimensions(int w, int h){
+    preview_width = w;
+    preview_height = h;
 }
