@@ -13,6 +13,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPlainTextEdit>
+#include <QTabWidget>
 
 //choosing which downscaling algorithm is used
 #include <QRadioButton>
@@ -34,6 +35,7 @@ public:
     ~MainWindow() override;
 
 private:
+    QTabWidget *tabs = new QTabWidget();
     QSplitter *splitter = new QSplitter();
     QListView *listview = new QListView;
     QLabel *image_viewer = new QLabel;
@@ -48,7 +50,8 @@ private:
     QSlider *hightlightsSlider = new QSlider(Qt::Horizontal);
     QLabel *shadowsLabel = new QLabel("Shadows",this);
     QSlider *shadowsSlider = new QSlider(Qt::Horizontal);
-    QPlainTextEdit *historyLabel = new QPlainTextEdit();
+    QPlainTextEdit *historyTextBox = new QPlainTextEdit();
+    QPlainTextEdit *graphTextBox = new QPlainTextEdit();
 
     Ui::MainWindow *ui;
 

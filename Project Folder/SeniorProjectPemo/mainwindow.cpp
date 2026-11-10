@@ -89,8 +89,8 @@ MainWindow::MainWindow(QWidget *parent)
     image_viewer->setPixmap(QPixmap::fromImage(img_output));
 
     //setting starting values to the History Label
-    historyLabel -> setReadOnly(true);
-    historyLabel -> setPlainText(QString::fromStdString(graph->history()));
+    historyTextBox -> setReadOnly(true);
+    historyTextBox -> setPlainText(QString::fromStdString(graph->history()));
 
     //QPixmap pix("/Users/emolindar/AUBG/Senior Project/Project/Project Folder/SeniorProjectPemo/images/images.jpeg");
     //image_viewer->setPixmap(pix);
@@ -106,11 +106,20 @@ MainWindow::MainWindow(QWidget *parent)
     panelLayout->addWidget(hightlightsSlider);
     panelLayout->addWidget(shadowsLabel);
     panelLayout->addWidget(shadowsSlider);
-    panelLayout->addWidget(historyLabel, 1);
+
+    panelLayout->addWidget(historyTextBox, 1);
     panelLayout->addStretch();
+
     splitter->addWidget(panel);
-    setCentralWidget(splitter);
-//ui->setupUi(this);
+
+    graphTextBox->setReadOnly(true);
+    graphTextBox->setPlainText("Version Graph Visualizer");
+
+    //structuring all of the widgets into tabs
+    tabs->addTab(splitter, "Editor");
+    tabs->addTab(graphTextBox, "Version Graph");
+
+    setCentralWidget(tabs);
 }
 
 void MainWindow::onDownscalingChanged(){
@@ -142,7 +151,7 @@ void MainWindow::refreshDisplay(){
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
 
-    historyLabel -> setPlainText(QString::fromStdString(graph -> history()));
+    historyTextBox -> setPlainText(QString::fromStdString(graph -> history()));
 }
 
 void MainWindow::refreshDisplayPreview(){
