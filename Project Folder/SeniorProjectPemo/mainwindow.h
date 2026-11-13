@@ -89,7 +89,10 @@ private:
     void branchButtonPressed();
 
     //branch checkouts
-
+    QComboBox *branchesBox = new QComboBox();
+    QPushButton *checkoutButton = new QPushButton();
+    void checkoutButtonPressed();
+    void refreshBranchesBox();
 
 //Image Select tab ------------------------------------------------------------------------
     QWidget *imageSelectPage = new QWidget();

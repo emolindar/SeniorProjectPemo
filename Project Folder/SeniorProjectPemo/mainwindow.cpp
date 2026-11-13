@@ -110,6 +110,9 @@ MainWindow::MainWindow(QWidget *parent)
     graphPanelLayout -> addWidget(branchButton);
     connect(branchButton, &QPushButton::clicked, this,&MainWindow::branchButtonPressed);
 
+    graphPanelLayout->addWidget(branchesBox);
+    graphPanelLayout->addWidget(checkoutButton);
+    connect(checkoutButton, &QPushButton::clicked, this, &MainWindow::checkoutButtonPressed);
 
     //setting things up for the Image import tab
     imageInfoLabel-> setAlignment(Qt::AlignCenter);
@@ -225,12 +228,29 @@ void MainWindow::importImage(){
 
 void MainWindow::RefreshGraphVisual(){
     graphTextBox -> setPlainText(QString::fromStdString("Version Graph Visualizer\n\n" + graph -> vizualize()));
+    refreshBranchesBox();
 }
 
 void MainWindow::branchButtonPressed(){
     graph->createBranch(branchNameInput->text().toStdString());
     branchNameInput->clear();
     RefreshGraphVisual();
+}
+
+void MainWindow::checkoutButtonPressed(){
+    graph->checkout(branchesBox->currentText().toStdString());
+    refreshDisplay();
+}
+
+void MainWindow::refreshBranchesBox(){
+    branchesBox->clear();
+    std::vector<std::string> branches = graph->getBranchNames();
+
+    for(int i=0; i<branches.size();i++){
+        branchesBox ->addItem(QString::fromStdString(branches[i]));
+    }
+
+    branchesBox->setCurrentText(QString::fromStdString(graph->getCurrentBranchName()));
 }
 
 MainWindow::~MainWindow()
