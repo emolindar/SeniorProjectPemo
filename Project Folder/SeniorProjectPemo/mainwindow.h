@@ -16,6 +16,7 @@
 #include <QTabWidget>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QComboBox>
 
 
 //choosing which downscaling algorithm is used
@@ -83,6 +84,12 @@ private:
     QVBoxLayout *graphPanelLayout = new QVBoxLayout(graphPanel);
     QPlainTextEdit *graphTextBox = new QPlainTextEdit();
 
+    QLineEdit *branchNameInput = new QLineEdit("New Branch Name");
+    QPushButton *branchButton = new QPushButton("Branch");
+    void branchButtonPressed();
+
+    //branch checkouts
+
 
 //Image Select tab ------------------------------------------------------------------------
     QWidget *imageSelectPage = new QWidget();
@@ -104,7 +111,7 @@ private:
     //version graph structure, replacing placeholder vector structure from before
     VersionGraph* graph = nullptr;
 
-
+    void RefreshGraphVisual();
 private slots:
     //this is necessary for the importing of images
     void importImage();

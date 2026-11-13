@@ -69,13 +69,12 @@ void VersionGraph::addNode(std::string name, std::function<void(Image&, float)> 
     //can just push_back and let the vector that has the indexes ( index_of_working_image) decide where we branch
     //or can decide where to branch here and then add to index of working image
 
-    //leaving like this for now, but this will always end up at 0 for now;
     curr_ -> next_.push_back(newNode);
     index_of_working_image.push_back(curr_->next_.size() - 1);
 
     //set the curr_
     curr_ = newNode;
-
+    branches[currBranchName] = curr_;
     //finally, now that i have added the change to the graph, let me actually apply the change
     working_image = constructCurrImage();
 
@@ -175,4 +174,97 @@ Image VersionGraph::constructExportImage(){
 void VersionGraph::setPreviewDimensions(int w){
     preview_width = w;
     preview_height = w/aspect_ratio;
+}
+
+
+//creating and managing branches
+void VersionGraph::createBranch(std::string branchName){
+    //creates a branch from the current node
+    if(branches.find(branchName) == branches.end()){
+        branches[branchName] = curr_;
+        currBranchName = branchName;
+    }
+}
+
+
+void VersionGraph::checkout(std::string branchName){
+    //goes to the branch with the name provided
+    if(branches.find(branchName) != branches.end()){
+        curr_ = branches[branchName];
+        currBranchName = branchName;
+        constructCurrImage();
+    }
+
+}
+
+std::string VersionGraph::vizualize(){
+    //visualizing the branches
+
+    //inverting the branches map so that i can check which branch a node belongs to
+    std::map<Node*, std::vector<std::string>> labels;
+    for(auto &[name, node] : branches){
+        labels[node].push_back(name);
+    }
+
+    std::string result = "\n";
+    std::string indentation = "";
+    visualizeNode(root_, indentation, labels, result);
+    return result;
+}
+
+
+void VersionGraph::visualizeNode(Node* node, std::string& indentation, std::map<Node*, std::vector<std::string>>& labels, std::string& result){
+    //recursive function that generates the string for the vizualization
+    result += indentation;
+    //edge/end case
+    if(node -> next_.size() == 0){
+        result += "---";
+    }else{
+        result += "|--";
+    }
+
+
+    if(node == root_){
+        result += "(root)";
+    }else{
+        result += node -> name + " " + to_string(node -> changeValue);
+    }
+
+    std::map<Node*, std::vector<std::string>>::iterator it = labels.find(node);
+    //printing the branche name
+    if(it != labels.end()){
+        result+= " [";
+        for(int i=0; i< it->second.size();i++){
+            if(i>0){
+                result += ", ";
+            }
+            //marking the current branch and node
+            if(it ->second[i] == currBranchName){
+                result+="*";
+            }
+            result += it->second[i];
+        }
+        result+= " ]";
+    }
+    result +="\n";
+
+
+    if(node -> next_.size() >1){
+        indentation += "      ";
+    }
+
+    for(int i=0; i<node -> next_.size(); i++){
+        visualizeNode(node->next_[i], indentation, labels, result);
+    }
+}
+
+std::vector<std::string> VersionGraph::getBranchNames(){
+    //returns a vector of all branch names
+    std::vector<std::string> result;
+
+    for(auto [name,node]: branches){
+        result.push_back(name);
+    }
+
+    return result;
 }

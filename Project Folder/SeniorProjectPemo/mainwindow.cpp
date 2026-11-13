@@ -27,7 +27,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
 
-    //testing exposure
     exposureSlider->setRange(-300, 300);
     exposureSlider->setValue(0);
 
@@ -104,14 +103,15 @@ MainWindow::MainWindow(QWidget *parent)
     //setting things up for the graph tab
 
     graphTextBox->setReadOnly(true);
-    graphTextBox->setPlainText("Version Graph Visualizer");
+    graphTextBox->setPlainText("Import Image to see Graph");
 
     graphPanelLayout -> addWidget(graphTextBox);
+    graphPanelLayout -> addWidget(branchNameInput);
+    graphPanelLayout -> addWidget(branchButton);
+    connect(branchButton, &QPushButton::clicked, this,&MainWindow::branchButtonPressed);
+
 
     //setting things up for the Image import tab
-
-
-
     imageInfoLabel-> setAlignment(Qt::AlignCenter);
     previewLabel -> setAlignment(Qt::AlignCenter);
     imageSelectLayout -> addWidget(importButton);
@@ -137,7 +137,7 @@ MainWindow::MainWindow(QWidget *parent)
             int w = previewWidthInput -> text().toInt();
 
 
-            if(w>0  && w<800 ){
+            if(w>0 ){
                 graph -> setPreviewDimensions(w);
 
                 graph -> getWorkingImage();
@@ -162,12 +162,12 @@ void MainWindow::onDownscalingChanged(){
 }
 
 void MainWindow::onModificationChange(std::string name, std::function<void(Image&, float)> func, float value){
-    graph->addNode(name, func, value/300.0f);
+    graph->addNode(name, func, value/1200.0f);
     refreshDisplay();
 }
 
 void MainWindow::onModificationChangePreview(std::function<void(Image&, float)> func, float value){
-    graph -> updatePreview(func, value/300.0f);
+    graph -> updatePreview(func, value/1200.0f);
     refreshDisplayPreview();
 }
 
@@ -176,20 +176,21 @@ void MainWindow::refreshDisplay(){
     //adding a scaling so that the image is always the same size, no matter the resolution it has. Will make this dynamic in the future
     output = output.scaled(
                        800,
-                       600,
+                       800,
                        Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
 
     historyTextBox -> setPlainText(QString::fromStdString(graph -> history()));
+    RefreshGraphVisual();
 }
 
 void MainWindow::refreshDisplayPreview(){
     QImage output = ImagetoQ(graph-> getPreview());
     output = output.scaled(
         800,
-        600,
-        Qt::IgnoreAspectRatio,
+        800,
+        Qt::KeepAspectRatio,
         Qt::SmoothTransformation);
     image_viewer->setPixmap(QPixmap::fromImage(output));
 }
@@ -222,6 +223,15 @@ void MainWindow::importImage(){
     adjustmentsPanel -> setEnabled(true);
 }
 
+void MainWindow::RefreshGraphVisual(){
+    graphTextBox -> setPlainText(QString::fromStdString("Version Graph Visualizer\n\n" + graph -> vizualize()));
+}
+
+void MainWindow::branchButtonPressed(){
+    graph->createBranch(branchNameInput->text().toStdString());
+    branchNameInput->clear();
+    RefreshGraphVisual();
+}
 
 MainWindow::~MainWindow()
 {

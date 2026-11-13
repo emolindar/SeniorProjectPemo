@@ -5,6 +5,7 @@
 #include "algorithms/dowscale.h"
 #include <functional>
 #include <vector>
+#include <map>
 
 /*TODO:
  *
@@ -58,9 +59,11 @@ private:
     vector<int> index_of_working_image;
     int image_version;
 
-    //helper to calc ratio(aspect ratio of og image)
+    //tracking branches
+    std::map<std::string, Node*> branches;
+    std::string currBranchName;
 
-
+    void visualizeNode(Node* node, std::string& indentation, std::map<Node*, std::vector<std::string>>& labels, std::string& result);
 public:
     VersionGraph(Image &img) :
         full_scale_image(img),
@@ -83,6 +86,11 @@ public:
         preview_width = 800;
         preview_height = preview_width/aspect_ratio;
         interpolation_radius = 16;
+
+        //setting up default branch
+        branches["master"] = curr_;
+        currBranchName = "master";
+
     };
 
     std::function<Image(Image&, int,int, int)> downscaling_function() { return downscaling_function_;}
@@ -104,6 +112,17 @@ public:
 
     std::string history();
     Image constructExportImage(); // applying the final adjustments to the full-scale resolution image
+
+
+    //creating and managing branches
+    void createBranch(std::string branchName);
+    void checkout(std::string branchName);
+
+    //visualizing the branches
+    std::string vizualize();
+    std::string getCurrentBranchName(){ return currBranchName; }
+    std::vector<std::string> getBranchNames();
+
 };
 
 #endif // VERSIONGRAPH_H
