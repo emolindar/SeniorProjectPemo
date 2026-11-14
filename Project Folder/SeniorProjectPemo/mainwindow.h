@@ -84,13 +84,14 @@ private:
     QVBoxLayout *graphPanelLayout = new QVBoxLayout(graphPanel);
     QPlainTextEdit *graphTextBox = new QPlainTextEdit();
 
-    QLineEdit *branchNameInput = new QLineEdit("New Branch Name");
+    QLabel *newBranchLabel = new QLabel("New Branch Name");
+    QLineEdit *branchNameInput = new QLineEdit();
     QPushButton *branchButton = new QPushButton("Branch");
     void branchButtonPressed();
 
     //branch checkouts
     QComboBox *branchesBox = new QComboBox();
-    QPushButton *checkoutButton = new QPushButton();
+    QPushButton *checkoutButton = new QPushButton("Checkout to branch");
     void checkoutButtonPressed();
     void refreshBranchesBox();
 

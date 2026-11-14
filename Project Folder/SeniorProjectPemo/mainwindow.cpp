@@ -106,6 +106,7 @@ MainWindow::MainWindow(QWidget *parent)
     graphTextBox->setPlainText("Import Image to see Graph");
 
     graphPanelLayout -> addWidget(graphTextBox);
+    graphPanelLayout -> addWidget(newBranchLabel);
     graphPanelLayout -> addWidget(branchNameInput);
     graphPanelLayout -> addWidget(branchButton);
     connect(branchButton, &QPushButton::clicked, this,&MainWindow::branchButtonPressed);

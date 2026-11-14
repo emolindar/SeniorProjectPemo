@@ -192,7 +192,7 @@ void VersionGraph::checkout(std::string branchName){
     if(branches.find(branchName) != branches.end()){
         curr_ = branches[branchName];
         currBranchName = branchName;
-        constructCurrImage();
+        working_image = constructCurrImage();
     }
 
 }
@@ -217,7 +217,10 @@ void VersionGraph::visualizeNode(Node* node, std::string& indentation, std::map<
     //recursive function that generates the string for the vizualization
     result += indentation;
     //edge/end case
-    if(node -> next_.size() == 0){
+    if(node -> prev_ == nullptr || node ->prev_ ->next_.size() > 1){
+        result += "+++";
+    }
+    else if(node -> next_.size() == 0){
         result += "---";
     }else{
         result += "|--";
@@ -248,13 +251,15 @@ void VersionGraph::visualizeNode(Node* node, std::string& indentation, std::map<
     }
     result +="\n";
 
-
+    std::string currIndent = indentation;
     if(node -> next_.size() >1){
-        indentation += "      ";
+        currIndent += "|      ";
+    }else{
+        currIndent += "     ";
     }
 
     for(int i=0; i<node -> next_.size(); i++){
-        visualizeNode(node->next_[i], indentation, labels, result);
+        visualizeNode(node->next_[i], currIndent, labels, result);
     }
 }
 
