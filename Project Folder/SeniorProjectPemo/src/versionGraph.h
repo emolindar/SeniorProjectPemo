@@ -98,11 +98,11 @@ public:
 
     Image &getWorkingImage();
     Image &getRootImage() { return root_image; }
-    void addNode(std::string name, std::function<void(Image &, float)> changeFunct, float value);
+    void addNode(std::string name, std::string changeFunct, float value);
 
     //functions for preview
     Image& getPreview(){ return preview; }
-    void updatePreview( std::function<void(Image&, float)> adjustment_func, float value);
+    void updatePreview( std::string adjustment_func, float value);
     void refreshPreview() { preview = preview_before_slider;}
     void setPreviewDimensions(int w);
 
@@ -125,6 +125,9 @@ public:
         //syncing sliders
     float getLatestValueFor(const std::string& adjustmentName);
 
+
+    //decoupling GUI from backbone codej
+    std::function<void(Image&,float)> getAlgorithm(const std::string func);
 
 };
 

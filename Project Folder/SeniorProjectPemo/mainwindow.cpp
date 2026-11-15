@@ -31,9 +31,9 @@ MainWindow::MainWindow(QWidget *parent)
     exposureSlider->setValue(0);
 
     //this makes it so that the function onExposureChange is called when the value of the slider is changed
-    connect(exposureSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(exposure, value); });
+    connect(exposureSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview("exposure", value); });
 
-    connect(exposureSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("exposure", exposure, exposureSlider->value());});
+    connect(exposureSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("exposure", "exposure", exposureSlider->value());});
     //^ need to add lambda function which can grab the exposure slider value and then call the on exposure change function
 
     //attempting to add the contrast slider with the generalized function
@@ -41,24 +41,24 @@ MainWindow::MainWindow(QWidget *parent)
     contrastSlider->setValue(0);
 
     //connecting the contrastSlider with the modified function but with the generalized method for applying modifications
-    connect(contrastSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(contrast, value); });
+    connect(contrastSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview("contrast", value); });
     //doing the same for the contrast preview
-    connect(contrastSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("contrast",contrast,contrastSlider->value());});
+    connect(contrastSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("contrast","contrast",contrastSlider->value());});
 
 
     //highlights
     hightlightsSlider->setRange(-300, 300);
     hightlightsSlider->setValue(0);
 
-    connect(hightlightsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(highlights, value);});
-    connect(hightlightsSlider, &QSlider::sliderReleased, this, [this](){onModificationChange("highlights", highlights, hightlightsSlider->value());} );
+    connect(hightlightsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview("highlights", value);});
+    connect(hightlightsSlider, &QSlider::sliderReleased, this, [this](){onModificationChange("highlights", "highlights", hightlightsSlider->value());} );
 
     //shadows
     shadowsSlider->setRange(-300, 300);
     shadowsSlider->setValue(0);
 
-    connect(shadowsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview(shadows, value);});
-    connect(shadowsSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("shadows", shadows, shadowsSlider->value());});
+    connect(shadowsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview("shadows", value);});
+    connect(shadowsSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("shadows", "shadows", shadowsSlider->value());});
 
     //downscaling algorithm buttons choice
     averageDowncaling = new QRadioButton("Averaging pixel Values in a block of 4");
@@ -107,10 +107,13 @@ MainWindow::MainWindow(QWidget *parent)
     graphPanelLayout -> addWidget(graphTextBox);
     graphPanelLayout -> addWidget(newBranchLabel);
     graphPanelLayout -> addWidget(branchNameInput);
+    branchButton->setEnabled(false);
     graphPanelLayout -> addWidget(branchButton);
+
     connect(branchButton, &QPushButton::clicked, this,&MainWindow::branchButtonPressed);
 
     graphPanelLayout->addWidget(branchesBox);
+    checkoutButton -> setEnabled(false);
     graphPanelLayout->addWidget(checkoutButton);
     connect(checkoutButton, &QPushButton::clicked, this, &MainWindow::checkoutButtonPressed);
 
@@ -166,12 +169,12 @@ void MainWindow::onDownscalingChanged(){
     }
 }
 
-void MainWindow::onModificationChange(std::string name, std::function<void(Image&, float)> func, float value){
+void MainWindow::onModificationChange(std::string name, std::string func, float value){
     graph->addNode(name, func, value/1200.0f);
     refreshDisplay();
 }
 
-void MainWindow::onModificationChangePreview(std::function<void(Image&, float)> func, float value){
+void MainWindow::onModificationChangePreview(std::string func, float value){
     graph -> updatePreview(func, value/1200.0f);
     refreshDisplayPreview();
 }
@@ -226,6 +229,8 @@ void MainWindow::importImage(){
     imageInfoLabel -> setText(QString::fromStdString(QFileInfo(path).fileName().toStdString() + "\n" + to_string(loaded.width()) + "\n" + to_string(loaded.height())));
     previewLabel->setPixmap(QPixmap::fromImage(loaded.scaled(400,300, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
     adjustmentsPanel -> setEnabled(true);
+    branchButton->setEnabled(true);
+    checkoutButton->setEnabled(true);
 }
 
 void MainWindow::RefreshGraphVisual(){
@@ -247,10 +252,10 @@ void MainWindow::checkoutButtonPressed(){
     hightlightsSlider->blockSignals(true);
     shadowsSlider->blockSignals(true);
 
-    exposureSlider->setValue(graph->getLatestValueFor("Exposure") * 1200);
-    contrastSlider->setValue(graph->getLatestValueFor("Contrast") * 1200);
-    hightlightsSlider->setValue(graph->getLatestValueFor("Highlights") * 1200);
-    shadowsSlider->setValue(graph->getLatestValueFor("Shadows") * 1200);
+    exposureSlider->setValue(graph->getLatestValueFor("exposure") * 1200);
+    contrastSlider->setValue(graph->getLatestValueFor("contrast") * 1200);
+    hightlightsSlider->setValue(graph->getLatestValueFor("highlights") * 1200);
+    shadowsSlider->setValue(graph->getLatestValueFor("shadows") * 1200);
 
     exposureSlider->blockSignals(false);
     contrastSlider->blockSignals(false);

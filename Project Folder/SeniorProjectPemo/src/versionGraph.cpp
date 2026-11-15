@@ -1,6 +1,10 @@
 #include "versionGraph.h"
 #include <string>
 #include <set>
+#include "algorithms/exposure.h"
+#include "algorithms/contrast.h"
+#include "algorithms/highlights.h"
+#include "algorithms/shadows.h"
 
 Node::Node(){
     changeMade = nullptr;
@@ -54,17 +58,35 @@ void VersionGraph::set_downscaling_function(std::function<Image(Image&, int,int,
     preview_before_slider = preview;
 }
 
-void VersionGraph::updatePreview(std::function<void(Image&, float)> adjustment_func, float value){
+std::function<void(Image&,float)> VersionGraph::getAlgorithm(const std::string func){
+    if(func == "exposure"){
+        return exposure;
+    }else if(func == "contrast"){
+        return contrast;
+    }else if(func == "highlights"){
+        return highlights;
+    }else if(func == "shadows"){
+        return shadows;
+    }
+    return nullptr;
+}
+
+
+void VersionGraph::updatePreview(std::string adjustment_func, float value){
     //this is like a setter for preview
     //idea is that i will use this to perform the live updates
     //need to remember to make a refresh function which sets it to a downscaled version of the workign image
     preview=preview_before_slider;
-    adjustment_func(preview, value);
+    std::function<void(Image&, float)> func = getAlgorithm(adjustment_func);
+    if(func){
+        func(preview, value);
+    }
 }
 
-void VersionGraph::addNode(std::string name, std::function<void(Image&, float)> changeFunct, float value){
+void VersionGraph::addNode(std::string name, std::string changeFunct, float value){
 
-    Node* newNode = new Node(name, changeFunct, value, curr_);
+    std::function<void(Image&, float)> func = getAlgorithm(changeFunct);
+    Node* newNode = new Node(name, func, value, curr_);
     //have a few options about how to go about this
     //can just push_back and let the vector that has the indexes ( index_of_working_image) decide where we branch
     //or can decide where to branch here and then add to index of working image
