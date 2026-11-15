@@ -110,6 +110,8 @@ public:
     //decoupling GUI from backbone codej
     std::function<void(Image&,float)> getAlgorithm(const std::string func);
 
+    //undo Button
+    void undo();
 };
 
 #endif // VERSIONGRAPH_H

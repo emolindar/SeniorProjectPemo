@@ -57,6 +57,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(shadowsSlider, &QSlider::valueChanged, this, [this](int value){onModificationChangePreview("shadows", value);});
     connect(shadowsSlider, &QSlider::sliderReleased, this, [this]() {onModificationChange("shadows", "shadows", shadowsSlider->value());});
 
+    //undo button
+    undoButton -> setEnabled(false);
+    adjustmentsPanelLayout -> addWidget(undoButton);
+
+    connect(undoButton, &QPushButton::clicked, this, &MainWindow::undoButtonPushed);
+
     //downscaling algorithm buttons choice
     averageDowncaling = new QRadioButton("Averaging pixel Values in a block of 4");
     lanczosDownscaling = new QRadioButton("Lanczos resampling");
@@ -173,6 +179,7 @@ void MainWindow::onDownscalingChanged(){
 
 void MainWindow::onModificationChange(std::string name, std::string func, float value){
     graph->addNode(name, func, value/1200.0f);
+    undoButton -> setEnabled(true);
     refreshDisplay();
 }
 
@@ -277,6 +284,12 @@ void MainWindow::refreshBranchesBox(){
     }
 
     branchesBox->setCurrentText(QString::fromStdString(graph->getCurrentBranchName()));
+}
+
+void MainWindow::undoButtonPushed(){
+    graph -> undo();
+    RefreshGraphVisual();
+    refreshDisplay();
 }
 
 MainWindow::~MainWindow()

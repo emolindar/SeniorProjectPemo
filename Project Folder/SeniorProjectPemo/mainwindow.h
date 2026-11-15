@@ -49,7 +49,8 @@ private:
     QWidget *adjustmentsPanel = new QWidget();
     QVBoxLayout *adjustmentsPanelLayout = new QVBoxLayout(adjustmentsPanel);
 
-
+    QPushButton *undoButton = new QPushButton("Undo");
+    void undoButtonPushed();
     //widgets needed in order to choose which downscaling algorithm is used
     QRadioButton *averageDowncaling;
     QRadioButton *lanczosDownscaling;

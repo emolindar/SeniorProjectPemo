@@ -336,6 +336,17 @@ float VersionGraph::getLatestValueFor(const std::string& adjustmentName){
     }
     return 0;
 }
+
+//undoButton
+void VersionGraph::undo(){
+    if(curr_ -> prev_ == nullptr) return;
+    Node * temp = curr_ -> prev_;
+    delete curr_;
+    curr_ = temp;
+
+    constructCurrImage();
+}
+
 //destructors
 
 Node::~Node(){
