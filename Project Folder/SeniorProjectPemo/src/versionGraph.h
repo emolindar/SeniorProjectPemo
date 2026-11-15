@@ -35,6 +35,10 @@ public:
     Node(std::string name, std::function<void(Image &, float)> changeFunct, float value);
     Node(std::string name, std::function<void(Image &, float)> changeFunct, float value,
          Node *prev_);
+
+    ~Node();
+
+
     void addChange(std::function<void(Image &, float)> changeFunct, float value);
     Node *next(int index_of_next);
 };
@@ -65,33 +69,10 @@ private:
 
     void visualizeNode(Node* node, std::string& indentation, std::map<Node*, std::vector<std::string>>& labels, std::string& result);
 public:
-    VersionGraph(Image &img) :
-        full_scale_image(img),
 
-        aspect_ratio((float)img.width()/(float)img.height()),
-        root_image(downscale_image_lanczos(img, 800, 800/aspect_ratio, 16)),
-        working_image(root_image),
-        preview(downscale_image_lanczos(root_image, 800, 800/aspect_ratio, 16)),
-        preview_before_slider(preview){
+    VersionGraph(Image &img);
+    ~VersionGraph();
 
-        root_ = new Node();
-        curr_ = root_;
-        index_of_working_image.clear();
-        image_version = 1;
-        downscaling_function_ = downscale_image_lanczos;
-
-
-        //add functionality to change these
-
-        preview_width = 800;
-        preview_height = preview_width/aspect_ratio;
-        interpolation_radius = 16;
-
-        //setting up default branch
-        branches["master"] = curr_;
-        currBranchName = "master";
-
-    };
 
     std::function<Image(Image&, int,int, int)> downscaling_function() { return downscaling_function_;}
     void set_downscaling_function(std::function<Image(Image&, int,int, int)> func);

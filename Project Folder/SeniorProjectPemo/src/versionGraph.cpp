@@ -38,7 +38,35 @@ void Node::addChange(std::function<void(Image&, float)> changeFunct, float value
 
 }
 
-//Version graph functions
+//Version graph functions -----------------------------------------------------------------------
+
+VersionGraph::VersionGraph(Image &img) :
+    full_scale_image(img),
+
+    aspect_ratio((float)img.width()/(float)img.height()),
+    root_image(downscale_image_lanczos(img, 800, 800/aspect_ratio, 16)),
+    working_image(root_image),
+    preview(downscale_image_lanczos(root_image, 800, 800/aspect_ratio, 16)),
+    preview_before_slider(preview){
+
+    root_ = new Node();
+    curr_ = root_;
+    index_of_working_image.clear();
+    image_version = 1;
+    downscaling_function_ = downscale_image_lanczos;
+
+
+    //add functionality to change these
+
+    preview_width = 800;
+    preview_height = preview_width/aspect_ratio;
+    interpolation_radius = 16;
+
+    //setting up default branch
+    branches["master"] = curr_;
+    currBranchName = "master";
+
+};
 
 Image& VersionGraph::getWorkingImage(){
     //returns the working image(i.e. the latest edited image)
@@ -307,4 +335,16 @@ float VersionGraph::getLatestValueFor(const std::string& adjustmentName){
         temp = temp->prev_;
     }
     return 0;
+}
+//destructors
+
+Node::~Node(){
+    for(int i=0; i<next_.size(); i++){
+        delete next_[i];
+    }
+}
+
+
+VersionGraph::~VersionGraph(){
+    delete root_;
 }
