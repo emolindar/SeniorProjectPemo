@@ -217,8 +217,9 @@ Image downscale_image_lanczos(Image& img, int result_width, int result_height, i
 
 
 
-Image horizontalLanczos(const Image& img, int result_width){
-    //returns an image that has been "quished" horizontally,
+Image twoPassLanczos(const Image& img, int result_width, int result_height){
+    //returns a downscaled image
+    //that has been resampled using Lanczos resampling, but done in two passes
 
 
     /*doing only a part of what the downscale_image_lanczos does
@@ -228,29 +229,29 @@ Image horizontalLanczos(const Image& img, int result_width){
     *-- this is the horizontal pass
     */
 
-    Image result(result_width, img.height());
+    Image horizontal_result(result_width, img.height());
 
     //dynamically assigned radius
     float radius = 2 * (float)img.width()/result_width;
 
-    for(int i=0; i<result.width(); i++){
-        for(int j=0; j< result.height(); j++){
+    for(int i=0; i<horizontal_result.width(); i++){
+        for(int j=0; j< horizontal_result.height(); j++){
 
             //correlational width
-            float corr_width = ( (float)img.width()/(float)result.width() ) * i;
+            float corr_width = ( (float)img.width()/(float)horizontal_result.width() ) * i;
 
             //boundaries
-            int interp_width_min = std::floor(max_of_two((float)(corr_width - std::sqrt(radius)/2.0f) , 0.0f));
-            int interp_width_max = std::floor(min_of_two((float)(corr_width + std::sqrt(radius)/2.0f) , (float)(img.width()-1)));
+            int interp_width_min = std::floor(max_of_two((float)(corr_width - radius) , 0.0f));
+            int interp_width_max = std::floor(min_of_two((float)(corr_width + radius) , (float)(img.width()-1)));
 
             float weighted_sum_red = 0;
             float weighted_sum_green = 0;
             float weighted_sum_blue = 0;
             float total_weight =0 ;
 
-            //setting up start index of loop
-            float correlational_index = img.height()*img.width() + corr_width;
-            for(int x = 0; x< radius*2; i++){
+
+
+            for(int x = interp_width_min; x< interp_width_max; i++){
                 //performing the resampling
                 /*instead of taking a pixel based on a location,
                  * i know the width, so I can take the image_data 1d vector,
@@ -259,13 +260,82 @@ Image horizontalLanczos(const Image& img, int result_width){
                  * no need for nested loop
                  */
 
+                float distance_to_point = std::abs(corr_width - x);
+                float lanczos_weight = lanczoWeight(distance_to_point, radius);
 
-
-
+                const Pixel& p = img.getPixel(x,img.height());
+                weighted_sum_red += p.red() * lanczos_weight;
+                weighted_sum_green += p.green() * lanczos_weight;
+                weighted_sum_blue += p.blue() * lanczos_weight;
+                total_weight+= lanczos_weight;
             }
+
+            horizontal_result.setPixel(i,j,Pixel(
+                                    std::clamp(weighted_sum_red/ total_weight,0.0f,1.0f),
+                                    std::clamp(weighted_sum_green/ total_weight,0.0f,1.0f),
+                                    std::clamp(weighted_sum_blue/ total_weight,0.0f,1.0f)));
+
+
 
         }
     }
 
-    return result;
+    /*
+     * this is the other part of the algorithm
+     *
+     * -- vertical pass
+     */
+
+    Image result(result_width, result_height);
+
+    //the vertical pass  might still have a different radius,
+    //based on the aspect ratio of the image
+
+    radius = 2 * (float)img.height()/result_height;
+
+    for(int i=0; i<result.width(); i++){
+        for(int j=0; j< result.height(); j++){
+
+            //correlational width
+            float corr_height = ( (float)img.height()/(float)result.height() ) * j;
+
+            //boundaries
+            int interp_height_min = std::floor(max_of_two((float)(corr_height - radius) , 0.0f));
+            int interp_height_max = std::floor(min_of_two((float)(corr_height + radius) , (float)(img.height()-1)));
+
+            float weighted_sum_red = 0;
+            float weighted_sum_green = 0;
+            float weighted_sum_blue = 0;
+            float total_weight =0 ;
+
+
+
+            for(int x = interp_width_min; x< interp_width_max; i++){
+                //performing the resampling
+                /*instead of taking a pixel based on a location,
+                 * i know the width, so I can take the image_data 1d vector,
+                 * start from the pixel that is <radius> left of the correlational position (corr_width, img.height()),
+                 * and loop through radius*2 pixels;
+                 * no need for nested loop
+                 */
+
+                float distance_to_point = std::abs(corr_width - x);
+                float lanczos_weight = lanczoWeight(distance_to_point, radius);
+
+                const Pixel& p = img.getPixel(x,img.height());
+                weighted_sum_red += p.red() * lanczos_weight;
+                weighted_sum_green += p.green() * lanczos_weight;
+                weighted_sum_blue += p.blue() * lanczos_weight;
+                total_weight+= lanczos_weight;
+            }
+
+            horizontal_result.setPixel(i,j,Pixel(
+                                                 std::clamp(weighted_sum_red/ total_weight,0.0f,1.0f),
+                                                 std::clamp(weighted_sum_green/ total_weight,0.0f,1.0f),
+                                                 std::clamp(weighted_sum_blue/ total_weight,0.0f,1.0f)));
+
+
+
+        }
+    }
 }
