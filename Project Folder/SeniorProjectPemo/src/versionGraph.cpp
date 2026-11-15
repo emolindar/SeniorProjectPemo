@@ -273,3 +273,16 @@ std::vector<std::string> VersionGraph::getBranchNames(){
 
     return result;
 }
+
+float VersionGraph::getLatestValueFor(const std::string& adjustmentName){
+    //this function returns the value of the latest time the adjustment was applied
+    //takes a string name for said adjustment
+    Node* temp = curr_;
+    while(temp != nullptr){
+        if(temp->name == adjustmentName){
+            return temp->changeValue;
+        }
+        temp = temp->prev_;
+    }
+    return 0;
+}

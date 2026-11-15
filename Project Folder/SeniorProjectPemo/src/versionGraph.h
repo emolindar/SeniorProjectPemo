@@ -69,16 +69,16 @@ public:
         full_scale_image(img),
 
         aspect_ratio((float)img.width()/(float)img.height()),
-        root_image(downscale_image_bicubic(img, 800, 800/aspect_ratio, 16)),
+        root_image(downscale_image_lanczos(img, 800, 800/aspect_ratio, 16)),
         working_image(root_image),
-        preview(downscale_image_bicubic(root_image, 800, 800/aspect_ratio, 16)),
+        preview(downscale_image_lanczos(root_image, 800, 800/aspect_ratio, 16)),
         preview_before_slider(preview){
 
         root_ = new Node();
         curr_ = root_;
         index_of_working_image.clear();
         image_version = 1;
-        downscaling_function_ = downscale_image_bicubic;
+        downscaling_function_ = downscale_image_lanczos;
 
 
         //add functionality to change these
@@ -122,6 +122,9 @@ public:
     std::string vizualize();
     std::string getCurrentBranchName(){ return currBranchName; }
     std::vector<std::string> getBranchNames();
+        //syncing sliders
+    float getLatestValueFor(const std::string& adjustmentName);
+
 
 };
 

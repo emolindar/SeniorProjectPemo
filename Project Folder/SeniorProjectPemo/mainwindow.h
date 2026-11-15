@@ -52,7 +52,7 @@ private:
 
     //widgets needed in order to choose which downscaling algorithm is used
     QRadioButton *averageDowncaling;
-    QRadioButton *bicubicDownscaling;
+    QRadioButton *lanczosDownscaling;
     QButtonGroup *downscalingButtonGroup;
 
 

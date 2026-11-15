@@ -106,8 +106,8 @@ float lanczoWeight(float distance, float area_radius){
     return sinc(distance) * sinc(distance/ area_radius);
 }
 
-//bicubic interpolation
-Image downscale_image_bicubic(Image& img, int result_width, int result_height, int interpolation_size){
+//lanczos resampling
+Image downscale_image_lanczos(Image& img, int result_width, int result_height, int interpolation_size){
     //this is another downscaling algorithm which should provide us with a more efficient result,
     //along with ability to scale, not hardcoded scale like the simpler downscaling algorithm I do have
 

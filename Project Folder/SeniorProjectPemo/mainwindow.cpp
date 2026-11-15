@@ -62,13 +62,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     //downscaling algorithm buttons choice
     averageDowncaling = new QRadioButton("Averaging pixel Values in a block of 4");
-    bicubicDownscaling = new QRadioButton("Bicubic downscaling");
-    averageDowncaling -> setChecked(true);
-        //setting the default downscaling algorithm as the simple averaging algorithm
-    downscalingFunction = downscale_image;
+    lanczosDownscaling = new QRadioButton("Lanczos resampling");
+    lanczosDownscaling -> setChecked(true);
+    downscalingFunction = downscale_image_lanczos;
     downscalingButtonGroup = new QButtonGroup(this);
     downscalingButtonGroup->addButton(averageDowncaling);
-    downscalingButtonGroup->addButton(bicubicDownscaling);
+    downscalingButtonGroup->addButton(lanczosDownscaling);
 
     connect(downscalingButtonGroup, &QButtonGroup::buttonClicked, this, &MainWindow::onDownscalingChanged);
 
@@ -84,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
     splitterEditor->addWidget(image_viewer);
 
     adjustmentsPanelLayout->addWidget(averageDowncaling);
-    adjustmentsPanelLayout->addWidget(bicubicDownscaling);
+    adjustmentsPanelLayout->addWidget(lanczosDownscaling);
     adjustmentsPanelLayout->addWidget(exposureLabel);
     adjustmentsPanelLayout->addWidget(exposureSlider);
     adjustmentsPanelLayout->addWidget(contrastLabel);
@@ -160,9 +159,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::onDownscalingChanged(){
     //set the function for the downscaling algorithm
-
-
-    //CURRENTLY USELESS, CREATE MECHANISM IN VERSIONGRAPH TO SUPPORT THIS
+    if(averageDowncaling->isChecked()){
+        graph ->set_downscaling_function(downscale_image);
+    }else{
+        graph -> set_downscaling_function(downscale_image_lanczos);
+    }
 }
 
 void MainWindow::onModificationChange(std::string name, std::function<void(Image&, float)> func, float value){
@@ -240,6 +241,23 @@ void MainWindow::branchButtonPressed(){
 
 void MainWindow::checkoutButtonPressed(){
     graph->checkout(branchesBox->currentText().toStdString());
+
+    exposureSlider->blockSignals(true);
+    contrastSlider->blockSignals(true);
+    hightlightsSlider->blockSignals(true);
+    shadowsSlider->blockSignals(true);
+
+    exposureSlider->setValue(graph->getLatestValueFor("Exposure") * 1200);
+    contrastSlider->setValue(graph->getLatestValueFor("Contrast") * 1200);
+    hightlightsSlider->setValue(graph->getLatestValueFor("Highlights") * 1200);
+    shadowsSlider->setValue(graph->getLatestValueFor("Shadows") * 1200);
+
+    exposureSlider->blockSignals(false);
+    contrastSlider->blockSignals(false);
+    hightlightsSlider->blockSignals(false);
+    shadowsSlider->blockSignals(false);
+
+
     refreshDisplay();
 }
 
