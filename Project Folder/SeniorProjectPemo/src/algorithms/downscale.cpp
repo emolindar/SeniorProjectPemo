@@ -1,6 +1,10 @@
 #include "dowscale.h"
 #include <cmath>
 
+//benchmarking
+#include <iostream>
+#include <chrono>
+
 float avg_of_4_colors(float c1, float c2, float c3, float c4){
     /*this function calculates the average of 4 colors -- for example the average of 4 hues of red
         takes 4 floats,
@@ -19,7 +23,7 @@ Image downscale_image(const Image& img, int result_width, int result_height){
      * returns a downscaled image object
     */
 
-
+    auto start = std::chrono::high_resolution_clock::now();
     //trying the original(i don't know how original it is but i am trying this by myself) idea
     //of downscaling using the logic that it will scale the image down 4 times
     //so that it will replace every block of 4 pixels with their avg color
@@ -66,6 +70,9 @@ Image downscale_image(const Image& img, int result_width, int result_height){
         }
     }
 
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+    std::cout << "Block Averaging took: " << elapsed.count() << "ms\n";
     return result;
 }
 
@@ -121,7 +128,7 @@ Image downscale_image_lanczos(Image& img, int result_width, int result_height){
      * and take the value of the corresponding place of the downscaled pixel
      */
 
-
+    auto start = std::chrono::high_resolution_clock::now();
     // in the thesis -- compare the different downscaling algorithms perform
 
 
@@ -213,6 +220,10 @@ Image downscale_image_lanczos(Image& img, int result_width, int result_height){
         }
     }
 
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+    std::cout << "Lanczos downscaling to ( " << result_width << ", " << result_height << ") took: " << elapsed.count() << " ms\n";
     return result;
 }
 
@@ -229,14 +240,14 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
     *
     *-- this is the horizontal pass
     */
-
+    auto start = std::chrono::high_resolution_clock::now();
     Image horizontal_result(result_width, img.height());
 
     //dynamically assigned radius
 
     if(result_width == 0) result_width = 1;
     float radius = std::max(2 * (float)img.width()/result_width, 2.0f);
-
+    float scale = radius/2;
     for(int i=0; i<horizontal_result.width(); i++){
         for(int j=0; j< horizontal_result.height(); j++){
 
@@ -246,8 +257,8 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
 
 
             //boundaries  NOT CORRECT FIX
-            int interp_width_min = std::floor(max((corr_height*img.width() + corr_width - radius) , 0.0f));
-            int interp_width_max = std::floor(min((corr_height*img.width() + corr_width + radius) , (float)(img.width()-1)));
+            int interp_width_min = std::floor(max((corr_width - radius) , 0.0f));
+            int interp_width_max = std::floor(min((corr_width + radius) , (float)(img.width()-1)));
 
             float weighted_sum_red = 0;
             float weighted_sum_green = 0;
@@ -256,7 +267,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
 
 
 
-            for(int x = interp_width_min; x< interp_width_max; x++){
+            for(int x = interp_width_min; x<= interp_width_max; x++){
                 //performing the resampling
                 /*instead of taking a pixel based on a location,
                  * i know the width, so I can take the image_data 1d vector,
@@ -266,7 +277,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
                  */
 
                 float distance_to_point = std::abs(corr_width - x);
-                float lanczos_weight = lanczoWeight(distance_to_point, radius);
+                float lanczos_weight = lanczoWeight(distance_to_point/scale, 2.0f);
 
                 const Pixel& p = img.getPixel(x,j);
                 weighted_sum_red += p.red() * lanczos_weight;
@@ -274,7 +285,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
                 weighted_sum_blue += p.blue() * lanczos_weight;
                 total_weight+= lanczos_weight;
             }
-
+            if (std::abs(total_weight) < 1e-6f) total_weight = 1.0f;
             horizontal_result.setPixel(i,j,Pixel(
                                     std::clamp(weighted_sum_red/ total_weight,0.0f,1.0f),
                                     std::clamp(weighted_sum_green/ total_weight,0.0f,1.0f),
@@ -297,8 +308,8 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
     //based on the aspect ratio of the image
 
     if (result_height == 0 ) result_height = 1;
-    radius = std::max(2.0f * (float)((float)img.height()/result_height), 2.0f);
-
+    radius = std::max(2.0f * (float)((float)horizontal_result.height()/result_height), 2.0f);
+    scale = radius/2;
     for(int i=0; i<result.width(); i++){
         for(int j=0; j< result.height(); j++){
 
@@ -306,11 +317,9 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
             float corr_height = ( (float)img.height()/(float)result.height() ) * j;
             float corr_width = ( (float)img.width()/(float)result.width() ) * i;
 
-            int corr_pos = corr_height * img.width() + corr_width;
-
             //boundaries
-            int interp_height_min = std::floor(max_of_two((float)(corr_height - radius) , 0.0f));
-            int interp_height_max = std::floor(min_of_two((float)(corr_height + radius) , img.height()-1));
+            int interp_height_min = std::floor(std::max((corr_height - radius) , 0.0f));
+            int interp_height_max = std::floor(std::min((corr_height + radius) , (float)img.height()-1));
 
             float weighted_sum_red = 0;
             float weighted_sum_green = 0;
@@ -319,7 +328,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
 
 
 
-            for(int y = interp_height_min; y< interp_height_max; y++){
+            for(int y = interp_height_min; y<= interp_height_max; y++){
                 //performing the resampling
                 /* trhe vertical pass is a bit more tricky
                  * but it would be the corr_pos - radius* width
@@ -340,16 +349,16 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
                  *    ----=> then we divide that by the img.width() to get the actual distance
                  */
                 float distance_to_point = std::abs(y - corr_height);
-                float lanczos_weight = lanczoWeight(distance_to_point, radius);
+                float lanczos_weight = lanczoWeight(distance_to_point / scale, 2.0f);
 
 
-                const Pixel& p = img.getPixel(i,y);
+                const Pixel& p = horizontal_result.getPixel(i,y);
                 weighted_sum_red += p.red() * lanczos_weight;
                 weighted_sum_green += p.green() * lanczos_weight;
                 weighted_sum_blue += p.blue() * lanczos_weight;
                 total_weight+= lanczos_weight;
             }
-
+            if (std::abs(total_weight) < 1e-6f) total_weight = 1.0f;
             result.setPixel(i,j,Pixel(
                                                  std::clamp(weighted_sum_red/ total_weight,0.0f,1.0f),
                                                  std::clamp(weighted_sum_green/ total_weight,0.0f,1.0f),
@@ -360,5 +369,8 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
         }
     }
 
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+    std::cout << "Two Pass Lanczos Downscaling to ( " << result_width << ", " << result_height << ") took: " << elapsed.count() << " ms\n";
     return result;
 }
