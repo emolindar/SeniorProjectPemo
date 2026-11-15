@@ -53,7 +53,7 @@ VersionGraph::VersionGraph(Image &img) :
     curr_ = root_;
     index_of_working_image.clear();
     image_version = 1;
-    downscaling_function_ = downscale_image_lanczos;
+    downscaling_function_ = twoPassLanczos;
 
 
     //add functionality to change these
@@ -340,11 +340,19 @@ float VersionGraph::getLatestValueFor(const std::string& adjustmentName){
 //undoButton
 void VersionGraph::undo(){
     if(curr_ -> prev_ == nullptr) return;
-    Node * temp = curr_ -> prev_;
-    delete curr_;
-    curr_ = temp;
 
-    constructCurrImage();
+
+    Node * to_delete = curr_ ;
+    Node* parent = to_delete -> prev_;
+    //remove branches that have been deleted when deleting a node
+
+
+    delete to_delete;
+    curr_ = parent;
+    curr_ -> next_.clear();
+    branches[currBranchName] = curr_;
+    working_image = constructCurrImage();
+
 }
 
 //destructors

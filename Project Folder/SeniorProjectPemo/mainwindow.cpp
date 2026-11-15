@@ -240,6 +240,7 @@ void MainWindow::importImage(){
     adjustmentsPanel -> setEnabled(true);
     branchButton->setEnabled(true);
     checkoutButton->setEnabled(true);
+    undoButton -> setEnabled(false);
 }
 
 void MainWindow::RefreshGraphVisual(){
@@ -290,6 +291,25 @@ void MainWindow::undoButtonPushed(){
     graph -> undo();
     RefreshGraphVisual();
     refreshDisplay();
+
+    exposureSlider->blockSignals(true);
+    contrastSlider->blockSignals(true);
+    hightlightsSlider->blockSignals(true);
+    shadowsSlider->blockSignals(true);
+
+    exposureSlider->setValue(graph->getLatestValueFor("exposure") * 1200);
+    contrastSlider->setValue(graph->getLatestValueFor("contrast") * 1200);
+    hightlightsSlider->setValue(graph->getLatestValueFor("highlights") * 1200);
+    shadowsSlider->setValue(graph->getLatestValueFor("shadows") * 1200);
+
+    exposureSlider->blockSignals(false);
+    contrastSlider->blockSignals(false);
+    hightlightsSlider->blockSignals(false);
+    shadowsSlider->blockSignals(false);
+
+
+    refreshDisplay();
+
 }
 
 MainWindow::~MainWindow()
