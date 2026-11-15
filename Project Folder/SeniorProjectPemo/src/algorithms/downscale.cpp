@@ -233,7 +233,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
     Image horizontal_result(result_width, img.height());
 
     //dynamically assigned radius
-    float radius = 2 * (float)img.width()/result_width;
+    float radius = std::max(2 * (float)img.width()/result_width, 2.0f);
 
     for(int i=0; i<horizontal_result.width(); i++){
         for(int j=0; j< horizontal_result.height(); j++){
@@ -254,7 +254,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
 
 
 
-            for(int x = interp_width_min; x< interp_width_max; i++){
+            for(int x = interp_width_min; x< interp_width_max; x++){
                 //performing the resampling
                 /*instead of taking a pixel based on a location,
                  * i know the width, so I can take the image_data 1d vector,
@@ -294,7 +294,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
     //the vertical pass  might still have a different radius,
     //based on the aspect ratio of the image
 
-    radius = 2 * (float)img.height()/result_height;
+    radius = std::max(2 * (float)img.height()/result_height, 2.0f);
 
     for(int i=0; i<result.width(); i++){
         for(int j=0; j< result.height(); j++){
@@ -316,7 +316,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
 
 
 
-            for(int x = interp_height_min; x< interp_height_max; i+=img.width()){
+            for(int x = interp_height_min; x< interp_height_max; x+=img.width()){
                 //performing the resampling
                 /* trhe vertical pass is a bit more tricky
                  * but it would be the corr_pos - radius* width
@@ -336,7 +336,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
                  *   but then if i do corr_pos(The second 0) -x (the first one ) thats 7
                  *    ----=> then we divide that by the img.width() to get the actual distance
                  */
-                float distance_to_point = std::abs((corr_pos - x)/img.width());
+                float distance_to_point = std::abs(corr_height -x);
                 float lanczos_weight = lanczoWeight(distance_to_point, radius);
 
 

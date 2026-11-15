@@ -43,10 +43,10 @@ public:
     const vector<Pixel>& image_data() const {return image_data_;}
 
     const Pixel& getPixel(int r, int c) const {
-        return image_data_[r*width() + c];
+        return image_data_[c*width() + r];
 	}
 	void setPixel(int r, int c, Pixel p){
-        image_data_[r*width() + c] = p;
+        image_data_[c*width() + r] = p;
 	}
 private: 
 	int width_ = 0;

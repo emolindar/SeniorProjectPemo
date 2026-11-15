@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     adjustmentsPanelLayout->addWidget(averageDowncaling);
     adjustmentsPanelLayout->addWidget(lanczosDownscaling);
+    adjustmentsPanelLayout->addWidget(twoPassLanczosDownscaling);
     adjustmentsPanelLayout->addWidget(exposureLabel);
     adjustmentsPanelLayout->addWidget(exposureSlider);
     adjustmentsPanelLayout->addWidget(contrastLabel);
