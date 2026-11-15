@@ -10,5 +10,6 @@ void Pixel::setPixel(float r, float g, float b){
 
 //constructors of Image
 Image::Image(int width,int height) : width_(width), height_(height) {
-    image_data_.resize(width, vector<Pixel>(height, Pixel(0,0,0)));
+
+    image_data_.assign(width * height, Pixel(0,0,0));
 }

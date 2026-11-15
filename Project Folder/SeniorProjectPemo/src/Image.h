@@ -13,9 +13,9 @@ public:
         b_=std::clamp(blue, 0.0f, 1.0f);
 	}
 
-    float red(){return r_;}
-    float green(){return g_;}
-    float blue(){return b_;}
+    float red() const {return r_;}
+    float green() const {return g_;}
+    float blue() const {return b_;}
 	
     void red(float r){r_= r;}
     void blue(float b){b_=b;}
@@ -40,18 +40,18 @@ public:
 
 	int width() const {return width_;}
 	int height() const {return height_;}
-	vector<vector<Pixel>> image_data(){return image_data_;}
+    vector<Pixel> image_data(){return image_data_;}
 
-	Pixel getPixel(int r, int c) const {
-		return image_data_[r][c];
+    const Pixel& getPixel(int r, int c) const {
+        return image_data_[r*width() + c];
 	}
 	void setPixel(int r, int c, Pixel p){
-		image_data_[r][c] = p;
+        image_data_[r*width() + c] = p;
 	}
 private: 
 	int width_ = 0;
-	int height_ =0;
-	vector<vector<Pixel>> image_data_;
+    int height_ =0;
+    vector<Pixel> image_data_;
 };
 
 

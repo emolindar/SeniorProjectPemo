@@ -214,3 +214,58 @@ Image downscale_image_lanczos(Image& img, int result_width, int result_height, i
 
     return result;
 }
+
+
+
+Image horizontalLanczos(const Image& img, int result_width){
+    //returns an image that has been "quished" horizontally,
+
+
+    /*doing only a part of what the downscale_image_lanczos does
+    *this is another iteration of the lanczos resampling,
+    *but doing it with one horizontal and one vertical pass
+    *
+    *-- this is the horizontal pass
+    */
+
+    Image result(result_width, img.height());
+
+    //dynamically assigned radius
+    float radius = 2 * (float)img.width()/result_width;
+
+    for(int i=0; i<result.width(); i++){
+        for(int j=0; j< result.height(); j++){
+
+            //correlational width
+            float corr_width = ( (float)img.width()/(float)result.width() ) * i;
+
+            //boundaries
+            int interp_width_min = std::floor(max_of_two((float)(corr_width - std::sqrt(radius)/2.0f) , 0.0f));
+            int interp_width_max = std::floor(min_of_two((float)(corr_width + std::sqrt(radius)/2.0f) , (float)(img.width()-1)));
+
+            float weighted_sum_red = 0;
+            float weighted_sum_green = 0;
+            float weighted_sum_blue = 0;
+            float total_weight =0 ;
+
+            //setting up start index of loop
+            float correlational_index = img.height()*img.width() + corr_width;
+            for(int x = 0; x< radius*2; i++){
+                //performing the resampling
+                /*instead of taking a pixel based on a location,
+                 * i know the width, so I can take the image_data 1d vector,
+                 * start from the pixel that is <radius> left of the correlational position (corr_width, img.height()),
+                 * and loop through radius*2 pixels;
+                 * no need for nested loop
+                 */
+
+
+
+
+            }
+
+        }
+    }
+
+    return result;
+}

@@ -2,10 +2,7 @@
 #include "./ui_mainwindow.h"
 #include "src/Image.h"
 #include "src/imageconverter.h"
-#include "src/algorithms/exposure.h"
-#include "src/algorithms/contrast.h"
-#include "src/algorithms/highlights.h"
-#include "src/algorithms/shadows.h"
+
 #include <QSlider>
 
 

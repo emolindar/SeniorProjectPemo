@@ -7,13 +7,16 @@ void contrast(Image& img, float value){
 
     for( int i =0; i< img.width(); i++){
         for (int j=0; j< img.height(); j++){
+
+            const Pixel& p = img.getPixel(i,j);
+
             img.setPixel(
                 i,
                 j,
                 Pixel(
-                (img.getPixel(i,j).red() - 0.5) * scale + 0.5,
-                (img.getPixel(i,j).green() - 0.5) * scale + 0.5,
-                (img.getPixel(i,j).blue() - 0.5) * scale + 0.5));
+                (p.red() - 0.5) * scale + 0.5,
+                (p.green() - 0.5) * scale + 0.5,
+                (p.blue() - 0.5) * scale + 0.5));
         }
     }
 }
