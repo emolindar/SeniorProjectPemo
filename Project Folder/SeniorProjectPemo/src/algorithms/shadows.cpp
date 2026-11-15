@@ -6,7 +6,7 @@ void shadows(Image& img, float value){
 
     for (int i =0; i< img.width(); i++){
         for (int j = 0; j< img.height(); j++){
-            Pixel p = img.getPixel(i,j);
+            const Pixel& p = img.getPixel(i,j);
             float lum = luminance(
                 p.red(),
                 p.green(),

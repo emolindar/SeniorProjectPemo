@@ -59,7 +59,7 @@ private:
     int preview_width, preview_height, interpolation_radius;
 
 
-    std::function<Image( Image&, int,int,int)> downscaling_function_; // default downscaling function is going to be the Lanczos interpolation
+    std::function<Image( Image&, int,int)> downscaling_function_; // default downscaling function is going to be the Lanczos interpolation
     vector<int> index_of_working_image;
     int image_version;
 
@@ -74,8 +74,8 @@ public:
     ~VersionGraph();
 
 
-    std::function<Image(Image&, int,int, int)> downscaling_function() { return downscaling_function_;}
-    void set_downscaling_function(std::function<Image(Image&, int,int, int)> func);
+    std::function<Image(Image&, int,int)> downscaling_function() { return downscaling_function_;}
+    void set_downscaling_function(std::function<Image(Image&, int,int)> func);
 
     Image &getWorkingImage();
     Image &getRootImage() { return root_image; }

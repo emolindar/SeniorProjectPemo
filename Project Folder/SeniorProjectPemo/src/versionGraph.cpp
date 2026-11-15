@@ -44,9 +44,9 @@ VersionGraph::VersionGraph(Image &img) :
     full_scale_image(img),
 
     aspect_ratio((float)img.width()/(float)img.height()),
-    root_image(downscale_image_lanczos(img, 800, 800/aspect_ratio, 16)),
+    root_image(downscale_image_lanczos(img, 800, 800/aspect_ratio)),
     working_image(root_image),
-    preview(downscale_image_lanczos(root_image, 800, 800/aspect_ratio, 16)),
+    preview(downscale_image_lanczos(root_image, 800, 800/aspect_ratio)),
     preview_before_slider(preview){
 
     root_ = new Node();
@@ -74,7 +74,7 @@ Image& VersionGraph::getWorkingImage(){
 }
 
 
-void VersionGraph::set_downscaling_function(std::function<Image(Image&, int,int, int)> func){
+void VersionGraph::set_downscaling_function(std::function<Image(Image&, int,int)> func){
     //changing the downscaling function ( when the radio button is selected)
     //need to 'refresh' the downscaling_function_ variable and then also
     //need to refersh the preview image as well
@@ -82,7 +82,7 @@ void VersionGraph::set_downscaling_function(std::function<Image(Image&, int,int,
 
     downscaling_function_ = func;
     Image temp = getWorkingImage();
-    preview = downscaling_function_(temp, preview_width, preview_height, 16);
+    preview = downscaling_function_(temp, preview_width, preview_height);
     preview_before_slider = preview;
 }
 
@@ -161,7 +161,7 @@ Image VersionGraph::constructCurrImage(){
         unique_functs[i](result, unique_functs_values[i]);
     }
 
-    preview = downscaling_function_(result, preview_width, preview_height, interpolation_radius);
+    preview = downscaling_function_(result, preview_width, preview_height);
     preview_before_slider = preview;
     return result;
 }

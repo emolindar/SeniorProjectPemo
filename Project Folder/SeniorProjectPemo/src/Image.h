@@ -40,7 +40,7 @@ public:
 
 	int width() const {return width_;}
 	int height() const {return height_;}
-    vector<Pixel> image_data(){return image_data_;}
+    const vector<Pixel>& image_data() const {return image_data_;}
 
     const Pixel& getPixel(int r, int c) const {
         return image_data_[r*width() + c];

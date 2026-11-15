@@ -53,6 +53,7 @@ private:
     //widgets needed in order to choose which downscaling algorithm is used
     QRadioButton *averageDowncaling;
     QRadioButton *lanczosDownscaling;
+    QRadioButton *twoPassLanczosDownscaling;
     QButtonGroup *downscalingButtonGroup;
 
 
@@ -72,7 +73,7 @@ private:
     void refreshDisplay();
     void refreshDisplayPreview();
 
-    std::function<Image(Image&,int,int,int)> downscalingFunction;
+    std::function<Image(Image&,int,int)> downscalingFunction;
 
     void onModificationChange(std::string name,std::string func, float value);
     void onModificationChangePreview(std::string func, float value);

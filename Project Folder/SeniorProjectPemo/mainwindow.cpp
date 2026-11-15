@@ -60,11 +60,13 @@ MainWindow::MainWindow(QWidget *parent)
     //downscaling algorithm buttons choice
     averageDowncaling = new QRadioButton("Averaging pixel Values in a block of 4");
     lanczosDownscaling = new QRadioButton("Lanczos resampling");
+    twoPassLanczosDownscaling = new QRadioButton("Two Pass Lanczos Resampling");
     lanczosDownscaling -> setChecked(true);
     downscalingFunction = downscale_image_lanczos;
     downscalingButtonGroup = new QButtonGroup(this);
     downscalingButtonGroup->addButton(averageDowncaling);
     downscalingButtonGroup->addButton(lanczosDownscaling);
+    downscalingButtonGroup->addButton(twoPassLanczosDownscaling);
 
     connect(downscalingButtonGroup, &QButtonGroup::buttonClicked, this, &MainWindow::onDownscalingChanged);
 
@@ -161,8 +163,10 @@ void MainWindow::onDownscalingChanged(){
     //set the function for the downscaling algorithm
     if(averageDowncaling->isChecked()){
         graph ->set_downscaling_function(downscale_image);
-    }else{
+    }else if(lanczosDownscaling ->isChecked()){
         graph -> set_downscaling_function(downscale_image_lanczos);
+    }else if(twoPassLanczosDownscaling -> isChecked()){
+        graph -> set_downscaling_function(twoPassLanczos);
     }
 }
 
