@@ -233,6 +233,8 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
     Image horizontal_result(result_width, img.height());
 
     //dynamically assigned radius
+
+    if(result_width == 0) result_width = 1;
     float radius = std::max(2 * (float)img.width()/result_width, 2.0f);
 
     for(int i=0; i<horizontal_result.width(); i++){
@@ -244,8 +246,8 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
 
 
             //boundaries  NOT CORRECT FIX
-            int interp_width_min = std::floor(max_of_two((float)(corr_width - radius) , 0.0f));
-            int interp_width_max = std::floor(min_of_two((float)(corr_width + radius) , (float)(img.width()-1)));
+            int interp_width_min = std::floor(max((corr_height*img.width() + corr_width - radius) , 0.0f));
+            int interp_width_max = std::floor(min((corr_height*img.width() + corr_width + radius) , (float)(img.width()-1)));
 
             float weighted_sum_red = 0;
             float weighted_sum_green = 0;
@@ -266,7 +268,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
                 float distance_to_point = std::abs(corr_width - x);
                 float lanczos_weight = lanczoWeight(distance_to_point, radius);
 
-                const Pixel& p = img.image_data()[x];
+                const Pixel& p = img.getPixel(x,j);
                 weighted_sum_red += p.red() * lanczos_weight;
                 weighted_sum_green += p.green() * lanczos_weight;
                 weighted_sum_blue += p.blue() * lanczos_weight;
@@ -294,7 +296,8 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
     //the vertical pass  might still have a different radius,
     //based on the aspect ratio of the image
 
-    radius = std::max(2 * (float)img.height()/result_height, 2.0f);
+    if (result_height == 0 ) result_height = 1;
+    radius = std::max(2.0f * (float)((float)img.height()/result_height), 2.0f);
 
     for(int i=0; i<result.width(); i++){
         for(int j=0; j< result.height(); j++){
@@ -306,8 +309,8 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
             int corr_pos = corr_height * img.width() + corr_width;
 
             //boundaries
-            int interp_height_min = std::floor(max_of_two((float)(corr_pos - radius*img.width()) , 0.0f));
-            int interp_height_max = std::floor(min_of_two((float)(corr_height + radius*img.width()) , (float)(img.height()*img.width()-1)));
+            int interp_height_min = std::floor(max_of_two((float)(corr_height - radius) , 0.0f));
+            int interp_height_max = std::floor(min_of_two((float)(corr_height + radius) , img.height()-1));
 
             float weighted_sum_red = 0;
             float weighted_sum_green = 0;
@@ -316,7 +319,7 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
 
 
 
-            for(int x = interp_height_min; x< interp_height_max; x+=img.width()){
+            for(int y = interp_height_min; y< interp_height_max; y++){
                 //performing the resampling
                 /* trhe vertical pass is a bit more tricky
                  * but it would be the corr_pos - radius* width
@@ -336,18 +339,18 @@ Image twoPassLanczos(const Image& img, int result_width, int result_height){
                  *   but then if i do corr_pos(The second 0) -x (the first one ) thats 7
                  *    ----=> then we divide that by the img.width() to get the actual distance
                  */
-                float distance_to_point = std::abs(corr_height -x);
+                float distance_to_point = std::abs(y - corr_height);
                 float lanczos_weight = lanczoWeight(distance_to_point, radius);
 
 
-                const Pixel& p = img.image_data()[x*img.width() + i];
+                const Pixel& p = img.getPixel(i,y);
                 weighted_sum_red += p.red() * lanczos_weight;
                 weighted_sum_green += p.green() * lanczos_weight;
                 weighted_sum_blue += p.blue() * lanczos_weight;
                 total_weight+= lanczos_weight;
             }
 
-            horizontal_result.setPixel(i,j,Pixel(
+            result.setPixel(i,j,Pixel(
                                                  std::clamp(weighted_sum_red/ total_weight,0.0f,1.0f),
                                                  std::clamp(weighted_sum_green/ total_weight,0.0f,1.0f),
                                                  std::clamp(weighted_sum_blue/ total_weight,0.0f,1.0f)));
