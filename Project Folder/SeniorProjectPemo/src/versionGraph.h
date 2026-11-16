@@ -110,6 +110,8 @@ public:
     //decoupling GUI from backbone codej
     std::function<void(Image&,float)> getAlgorithm(const std::string func);
 
+    //merge function
+    void mergeBranch(const std::string& targetBranchName);
     //undo Button
     void undo();
 };

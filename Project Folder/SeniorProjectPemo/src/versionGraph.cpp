@@ -355,6 +355,72 @@ void VersionGraph::undo(){
 
 }
 
+void VersionGraph::mergeBranch(const std::string& targetBranchName){
+    //function to merge the current branch with the target branch
+
+    Node* currBranch = curr_;
+    Node* target = branches[targetBranchName];
+
+    //first collect all nodes from the current down to the root
+    std::set<Node*> currentNodeSet;
+    Node* temp = currBranch;
+    while(temp != nullptr){
+        currentNodeSet.insert(temp);
+        temp = temp ->prev_;
+    }
+
+    //go from the target back until they collide
+    //if nowhere else, they will meet at the root ( but then you can also press merge at root)
+    Node* meetingPoint = target;
+    while(currentNodeSet.count(meetingPoint) == 0 and meetingPoint != nullptr){
+        meetingPoint = meetingPoint->prev_;
+    }
+
+    //now meetingpoint is the actual meeting point
+
+    //i already have the collection of Nodes for the current branch,
+    //but I need it for the target branch too
+    //i will then separate out the individual changes, and i need to take only the latest one
+
+    //first for the currentBranch, collecting latest of each adjustment algorithm
+    temp = curr_;
+    vector<Node*> latest_of_each_current;
+    while(temp != nullptr){
+
+        //check if latest_of_each_current already has this type of adjustment
+        //and since we're going backwards, that one would be the latest
+        bool b = false;
+        for(int i=0; i<latest_of_each_current.size(); i++){
+            if(latest_of_each_current[i]->name == temp ->name){
+                b = true;
+            }
+        }
+        if(b) break;
+
+        latest_of_each_current.push_back(temp);
+    }
+
+    //same thing for target branch
+    temp = target;
+    vector<Node*> latest_of_each_target;
+    while(temp != meetingPoint){
+
+        bool b = false;
+        for(int i=0; i<latest_of_each_target.size(); i++){
+            if(latest_of_each_target[i]->name == temp ->name){
+                b = true;
+            }
+        }
+        if(b) break;
+
+        latest_of_each_target.push_back(temp);
+    }
+
+
+
+
+}
+
 //destructors
 
 Node::~Node(){
