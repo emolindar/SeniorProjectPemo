@@ -122,6 +122,10 @@ MainWindow::MainWindow(QWidget *parent)
     checkoutButton -> setEnabled(false);
     graphPanelLayout->addWidget(checkoutButton);
     connect(checkoutButton, &QPushButton::clicked, this, &MainWindow::checkoutButtonPressed);
+    mergeButton -> setEnabled(false);
+    graphPanelLayout->addWidget(mergeBranchesBox);
+    graphPanelLayout -> addWidget(mergeButton);
+    connect(mergeButton, &QPushButton::clicked, this, &MainWindow::mergeButtonPressed);
 
     //setting things up for the Image import tab
     imageInfoLabel-> setAlignment(Qt::AlignCenter);
@@ -246,12 +250,14 @@ void MainWindow::importImage(){
 void MainWindow::RefreshGraphVisual(){
     graphTextBox -> setPlainText(QString::fromStdString("Version Graph Visualizer\n\n" + graph -> vizualize()));
     refreshBranchesBox();
+    refreshMergeBox();
 }
 
 void MainWindow::branchButtonPressed(){
     graph->createBranch(branchNameInput->text().toStdString());
     branchNameInput->clear();
     RefreshGraphVisual();
+    mergeButton -> setEnabled(true);
 }
 
 void MainWindow::checkoutButtonPressed(){
@@ -309,6 +315,28 @@ void MainWindow::undoButtonPushed(){
 
 
     refreshDisplay();
+
+}
+
+void MainWindow::mergeButtonPressed(){
+    graph->mergeBranch(mergeBranchesBox -> currentText() .toStdString());
+
+    refreshBranchesBox();
+    refreshMergeBox();
+    RefreshGraphVisual();
+    refreshDisplay();
+}
+
+void MainWindow::refreshMergeBox(){
+    mergeBranchesBox->clear();
+    std::vector<std::string> branches = graph->getBranchNames();
+
+    for(int i=0; i<branches.size();i++){
+        if(branches[i] != graph->getCurrentBranchName()){
+            //making sure that the current branch is not an option ( can't merge with yourself)
+            mergeBranchesBox ->addItem(QString::fromStdString(branches[i]));
+        }
+    }
 
 }
 

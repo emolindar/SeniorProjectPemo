@@ -398,6 +398,7 @@ void VersionGraph::mergeBranch(const std::string& targetBranchName){
         if(b) break;
 
         latest_of_each_current.push_back(temp);
+        temp = temp->prev_;
     }
 
     //same thing for target branch
@@ -411,9 +412,10 @@ void VersionGraph::mergeBranch(const std::string& targetBranchName){
                 b = true;
             }
         }
-        if(b) break;
-
-        latest_of_each_target.push_back(temp);
+        if(!b){
+            latest_of_each_target.push_back(temp);
+        }
+        temp=temp -> prev_;
     }
 
     // i wonder if I can brute force the merge by deleting the target branch and then
@@ -435,9 +437,24 @@ void VersionGraph::mergeBranch(const std::string& targetBranchName){
     //those that exist in current but  not in target are applied anyways
 
     //now to delete the other branch
-    if(target != meetingPoint){
+    if(target != meetingPoint && target != root_){
 
         //find the node that is part of that branch and after the meeting point
+        while(target != meetingPoint){
+            target = target -> prev_;
+        }
+
+        //find the index of meetingPoint next_ that is the branch
+        int index_meetingPoint_next_ = 0;
+        for(int i=0; i<meetingPoint -> next_.size(); i++ ){
+            if(meetingPoint->next_[i] == target){
+                index_meetingPoint_next_ = i;
+            }
+        }
+
+        target = meetingPoint->next_[index_meetingPoint_next_];
+        meetingPoint->next_.erase(meetingPoint->next_.begin() + index_meetingPoint_next_);
+        delete target;
     }
 }
 

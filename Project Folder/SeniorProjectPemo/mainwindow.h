@@ -97,6 +97,12 @@ private:
     void checkoutButtonPressed();
     void refreshBranchesBox();
 
+    //branch merging
+    QComboBox *mergeBranchesBox = new QComboBox();
+    QPushButton *mergeButton = new QPushButton("Merge with current branch");
+    void mergeButtonPressed();
+    void refreshMergeBox();
+
 //Image Select tab ------------------------------------------------------------------------
     QWidget *imageSelectPage = new QWidget();
     QVBoxLayout *imageSelectLayout = new QVBoxLayout(imageSelectPage);
