@@ -416,9 +416,29 @@ void VersionGraph::mergeBranch(const std::string& targetBranchName){
         latest_of_each_target.push_back(temp);
     }
 
+    // i wonder if I can brute force the merge by deleting the target branch and then
+    //add the every adjustment as a new node on the current branch;
+
+    //first combine each each "type" of adjustment into one
+    for(int i=0; i<latest_of_each_target.size(); i++){
 
 
+        float adj_strength = latest_of_each_target[i]->changeValue;
+        for(int j=0; j<latest_of_each_current.size(); j++){
+            if(latest_of_each_current[j] ->name == latest_of_each_target[i] ->name){
+                adj_strength = (adj_strength + latest_of_each_current[j]->changeValue)/2.0f;
+            }
+        }
+        addNode(latest_of_each_target[i] ->name, latest_of_each_target[i] -> name,adj_strength);
+    }
 
+    //those that exist in current but  not in target are applied anyways
+
+    //now to delete the other branch
+    if(target != meetingPoint){
+
+        //find the node that is part of that branch and after the meeting point
+    }
 }
 
 //destructors
