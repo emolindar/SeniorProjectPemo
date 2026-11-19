@@ -9,7 +9,7 @@
 #include <QFileDialog>
 #include <QImageReader>
 #include <QMessageBox>
-
+#include <QDir>
 
 /*TODO
 
@@ -161,10 +161,31 @@ MainWindow::MainWindow(QWidget *parent)
             }
         }
     });
+
+
+    //Export tab
+    exportBranchLabel -> setText("Exporting from branch: ");
+    QHBoxLayout *pathLayout = new QHBoxLayout();
+    exportPathLineEdit -> setPlaceholderText("Select destination folder...");
+    exportPathLineEdit -> setReadOnly(true);
+
+    pathLayout -> addWidget(exportFolderBrowseButton);
+    pathLayout -> addWidget(exportPathLineEdit);
+
+    exportButton -> setEnabled(false);
+
+    exportLayout -> addWidget(exportBranchLabel);
+    exportLayout -> addLayout(pathLayout);
+    exportLayout -> addWidget(exportButton);
+
+    connect(exportFolderBrowseButton, &QPushButton::clicked, this, &MainWindow::onExportFolderBrowsePushed);
+    connect(exportButton, &QPushButton::clicked, this, &MainWindow::exportImage);
+
     //structuring all of the widgets into tabs
     tabs->addTab(imageSelectPage, "Image Select");
     tabs->addTab(splitterEditor, "Editor");
     tabs->addTab(graphPanel, "Version Graph");
+    tabs->addTab(exportTab, "Export");
 
 
     setCentralWidget(tabs);
@@ -339,6 +360,48 @@ void MainWindow::refreshMergeBox(){
     }
 
 }
+
+
+void MainWindow::onExportFolderBrowsePushed(){
+    QString filePath = QFileDialog::getExistingDirectory(
+        this,
+        "Select Export Destination",
+        "",
+        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+    exportPathLineEdit ->setText(filePath);
+    exportButton->setEnabled(true);
+
+}
+
+void MainWindow::exportImage(){
+    QString folderPath = exportPathLineEdit ->text();
+    if(folderPath.isEmpty()) return;
+
+    //add a select fore the file extension
+    QString fileName = QString::fromStdString(graph->getCurrentBranchName()) + "_export.png";
+    QString fullPath = QDir(folderPath).filePath(fileName);
+
+    exportButton -> setText("Processing...");
+    exportButton->setEnabled(false);
+    QCoreApplication::processEvents();
+
+    Image finalImg = graph->constructExportImage();
+    QImage exportImage = ImagetoQ(finalImg);
+
+    if(exportImage.save(fullPath)){
+        QMessageBox::information(this, "Success", "Image exported successfully to: \n" + fullPath);
+    }else{
+        QMessageBox::critical(this, "Error", "Failed to save image. Check folder properties.");
+    }
+
+
+
+    exportButton->setText("Export");
+    exportButton->setEnabled(true);
+
+}
+
 
 MainWindow::~MainWindow()
 {

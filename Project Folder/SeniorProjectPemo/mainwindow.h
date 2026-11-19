@@ -117,6 +117,16 @@ private:
     QLineEdit *previewHeightInput = new QLineEdit("200");
     QPushButton *applyPreviewDimensions = new QPushButton("Apply new preview dimensions.");
 
+//Export Tab
+    QPushButton *exportButton = new QPushButton("Export Image");
+    QLabel *exportBranchLabel = new QLabel();
+    QLineEdit *exportPathLineEdit = new QLineEdit();
+    QPushButton *exportFolderBrowseButton = new QPushButton("Browse");
+    QWidget *exportTab = new QWidget();
+    QVBoxLayout *exportLayout = new QVBoxLayout(exportTab);
+
+    void onExportFolderBrowsePushed();
+    void exportImage();
 
     Ui::MainWindow *ui;
 
@@ -124,8 +134,7 @@ private:
     VersionGraph* graph = nullptr;
 
     void RefreshGraphVisual();
-private slots:
-    //this is necessary for the importing of images
+
     void importImage();
 };
 #endif // MAINWINDOW_H
