@@ -174,7 +174,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     exportButton -> setEnabled(false);
 
+
     exportLayout -> addWidget(exportBranchLabel);
+    exportLayout -> addWidget(extensionTextEdit);
     exportLayout -> addLayout(pathLayout);
     exportLayout -> addWidget(exportButton);
 
@@ -266,6 +268,7 @@ void MainWindow::importImage(){
     branchButton->setEnabled(true);
     checkoutButton->setEnabled(true);
     undoButton -> setEnabled(false);
+    exportBranchLabel -> setText(QString::fromStdString("Exporting from branch: " + graph-> getCurrentBranchName()));
 }
 
 void MainWindow::RefreshGraphVisual(){
@@ -279,6 +282,9 @@ void MainWindow::branchButtonPressed(){
     branchNameInput->clear();
     RefreshGraphVisual();
     mergeButton -> setEnabled(true);
+    exportBranchLabel -> setText(QString::fromStdString("Exporting from branch: " + graph-> getCurrentBranchName()));
+    refreshBranchesBox();
+    refreshMergeBox();
 }
 
 void MainWindow::checkoutButtonPressed(){
@@ -299,8 +305,9 @@ void MainWindow::checkoutButtonPressed(){
     hightlightsSlider->blockSignals(false);
     shadowsSlider->blockSignals(false);
 
-
+    exportBranchLabel -> setText(QString::fromStdString("Exporting from branch: " + graph-> getCurrentBranchName()));
     refreshDisplay();
+    refreshMergeBox();
 }
 
 void MainWindow::refreshBranchesBox(){
@@ -312,6 +319,8 @@ void MainWindow::refreshBranchesBox(){
     }
 
     branchesBox->setCurrentText(QString::fromStdString(graph->getCurrentBranchName()));
+    exportBranchLabel -> setText(QString::fromStdString("Exporting from branch: " + graph-> getCurrentBranchName()));
+    refreshMergeBox();
 }
 
 void MainWindow::undoButtonPushed(){
@@ -334,9 +343,10 @@ void MainWindow::undoButtonPushed(){
     hightlightsSlider->blockSignals(false);
     shadowsSlider->blockSignals(false);
 
+    exportBranchLabel -> setText(QString::fromStdString("Exporting from branch: " + graph-> getCurrentBranchName()));
 
     refreshDisplay();
-
+    refreshMergeBox();
 }
 
 void MainWindow::mergeButtonPressed(){
@@ -346,6 +356,28 @@ void MainWindow::mergeButtonPressed(){
     refreshMergeBox();
     RefreshGraphVisual();
     refreshDisplay();
+    exportBranchLabel -> setText(QString::fromStdString("Exporting from branch: " + graph-> getCurrentBranchName()));
+    refreshMergeBox();
+    refreshBranchesBox();
+
+    //making sure that the sliders are updated
+    RefreshGraphVisual();
+    refreshDisplay();
+
+    exposureSlider->blockSignals(true);
+    contrastSlider->blockSignals(true);
+    hightlightsSlider->blockSignals(true);
+    shadowsSlider->blockSignals(true);
+
+    exposureSlider->setValue(graph->getLatestValueFor("exposure") * 1200);
+    contrastSlider->setValue(graph->getLatestValueFor("contrast") * 1200);
+    hightlightsSlider->setValue(graph->getLatestValueFor("highlights") * 1200);
+    shadowsSlider->setValue(graph->getLatestValueFor("shadows") * 1200);
+
+    exposureSlider->blockSignals(false);
+    contrastSlider->blockSignals(false);
+    hightlightsSlider->blockSignals(false);
+    shadowsSlider->blockSignals(false);
 }
 
 void MainWindow::refreshMergeBox(){
@@ -377,9 +409,9 @@ void MainWindow::onExportFolderBrowsePushed(){
 void MainWindow::exportImage(){
     QString folderPath = exportPathLineEdit ->text();
     if(folderPath.isEmpty()) return;
-
+    QString extension = extensionTextEdit -> text();
     //add a select fore the file extension
-    QString fileName = QString::fromStdString(graph->getCurrentBranchName()) + "_export.png";
+    QString fileName = QString::fromStdString(graph->getCurrentBranchName()) + "_export." + extension;
     QString fullPath = QDir(folderPath).filePath(fileName);
 
     exportButton -> setText("Processing...");

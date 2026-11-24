@@ -266,7 +266,8 @@ std::string VersionGraph::vizualize(){
 void VersionGraph::visualizeNode(Node* node, std::string& indentation, std::map<Node*, std::vector<std::string>>& labels, std::string& result){
     //recursive function that generates the string for the vizualization
     result += indentation;
-    //edge/end case
+
+    //new branch case
     if(node -> prev_ == nullptr || node ->prev_ ->next_.size() > 1){
         result += "+++";
     }
@@ -456,7 +457,12 @@ void VersionGraph::mergeBranch(const std::string& targetBranchName){
         meetingPoint->next_.erase(meetingPoint->next_.begin() + index_meetingPoint_next_);
         delete target;
     }
+
+    //deleting the merged branch from the branches map:
+
+    branches.erase(targetBranchName);
 }
+
 
 //destructors
 

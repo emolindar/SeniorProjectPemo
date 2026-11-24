@@ -112,7 +112,7 @@ private:
 
 
     QLabel *previewWidthInputLabel = new QLabel("Desired preview width: ");
-    QLineEdit *previewWidthInput = new QLineEdit("400");
+    QLineEdit *previewWidthInput = new QLineEdit("800");
     QLabel *previewHeightInputLabel = new QLabel("Desired preview height: ");
     QLineEdit *previewHeightInput = new QLineEdit("200");
     QPushButton *applyPreviewDimensions = new QPushButton("Apply new preview dimensions.");
@@ -124,7 +124,7 @@ private:
     QPushButton *exportFolderBrowseButton = new QPushButton("Browse");
     QWidget *exportTab = new QWidget();
     QVBoxLayout *exportLayout = new QVBoxLayout(exportTab);
-
+    QLineEdit *extensionTextEdit = new QLineEdit("png");
     void onExportFolderBrowsePushed();
     void exportImage();
 
