@@ -1,6 +1,7 @@
 #include "versionGraph.h"
 #include <string>
 #include <set>
+#include <iostream>
 #include "algorithms/exposure.h"
 #include "algorithms/contrast.h"
 #include "algorithms/highlights.h"
@@ -190,6 +191,8 @@ std::string VersionGraph::history(){
 Image VersionGraph::constructExportImage(){
     //returns the full scale resolution image with the final adjustments applied
     //function follows all the same logic as constructCurrImage();
+
+    auto start = std::chrono::high_resolution_clock::now();
     std::vector<Node*> path;
 
     Node* n= curr_;
@@ -217,7 +220,10 @@ Image VersionGraph::constructExportImage(){
         unique_functs[i](result, unique_functs_values[i]);
     }
 
-
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+    std::cout << "Exporting this image took: " << elapsed.count() <<
+        "ms. Resolution = " << result.width() << "x" <<  result.height() << "\n";
     return result;
 }
 
