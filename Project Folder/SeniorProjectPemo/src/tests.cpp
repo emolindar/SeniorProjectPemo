@@ -13,7 +13,8 @@
 
 
 bool approximatelyEqual(float a, float b){
-    // using epsilon tolerance to see if two values are approx. equal
+    // adding a tolerance to see if two values are approx. equal
+    //with some room for inperceptable error
     return std::fabs(a-b) <= 1e-4f;
 }
 
@@ -111,7 +112,7 @@ void assertAfterDownscaling(){
     }
 
     //two pass lanczos
-    Image downscaledTwoPassLanczos = downscale_image_lanczos(first,50,50);
+    Image downscaledTwoPassLanczos = twoPassLanczos(first,50,50);
     assert(downscaledTwoPassLanczos.width()==50 && downscaledTwoPassLanczos.height()==50);
 
     for(int i=0; i<downscaledTwoPassLanczos.width(); i++){
@@ -126,4 +127,12 @@ void assertAfterDownscaling(){
 
     std::cout<<"\n-----------Downscaling Tests Complete-----------\n";
 
+}
+
+
+int main(){
+    assertZeroAdjustment();
+    assertAfterDownscaling();
+    std::cout<<"Tests done";
+    return 0;
 }
