@@ -3,9 +3,9 @@
 #include "src/Image.h"
 #include "src/imageconverter.h"
 
+#include <iostream>
+
 #include <QSlider>
-
-
 #include <QFileDialog>
 #include <QImageReader>
 #include <QMessageBox>
@@ -243,9 +243,15 @@ void MainWindow::importImage(){
     /*function that opens a file explorer page and gets the path of a selected image.
     * after the image is received, it is shown in a preview window
     */
+
+
+
     QString path = QFileDialog::getOpenFileName(this, "Import Image", QString());
     if(path.isEmpty()) return;
 
+
+    //collection timing information for the testing section
+    auto start = std::chrono::high_resolution_clock::now();
     QImageReader reader(path);
     QImage  loaded = reader.read();
 
@@ -269,6 +275,10 @@ void MainWindow::importImage(){
     checkoutButton->setEnabled(true);
     undoButton -> setEnabled(false);
     exportBranchLabel -> setText(QString::fromStdString("Exporting from branch: " + graph-> getCurrentBranchName()));
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> elapsed = end - start;
+    std::cout << "Importing image took " << elapsed.count() << "ms\n";
 }
 
 void MainWindow::RefreshGraphVisual(){

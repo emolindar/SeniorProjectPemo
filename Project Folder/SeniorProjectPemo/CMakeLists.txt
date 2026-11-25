@@ -59,6 +59,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/algorithms/shadows.cpp
         src/algorithms/extraFuncts.h
         src/algorithms/extraFuncts.cpp
+        src/tests.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET SeniorProjectPemo APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
