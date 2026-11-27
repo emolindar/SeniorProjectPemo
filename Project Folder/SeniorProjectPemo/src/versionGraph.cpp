@@ -82,7 +82,7 @@ void VersionGraph::set_downscaling_function(std::function<Image(Image&, int,int)
 
 
     downscaling_function_ = func;
-    Image temp = getWorkingImage();
+    Image temp = root_image;
     preview = downscaling_function_(temp, preview_width, preview_height);
     preview_before_slider = preview;
 }
@@ -106,12 +106,19 @@ void VersionGraph::updatePreview(std::string adjustment_func, float value){
     //idea is that i will use this to perform the live updates
     //need to remember to make a refresh function which sets it to a downscaled version of the workign image
     preview=preview_before_slider;
-    std::function<void(Image&, float)> func = getAlgorithm(adjustment_func);
-    if(func){
-        func(preview, value);
+
+
+    std::vector<std::string> adjustments = {"exposure", "contrast", "highlights", "shadows"};
+
+    for(int i=0; i< adjustments.size(); i++){
+        std::function<void(Image&, float)> func = getAlgorithm(adjustments[i]);
+        if(adjustment_func == adjustments[i]){
+            func(preview, value);
+        }else{
+            func(preview, getLatestValueFor(adjustments[i]));
+        }
     }
 }
-
 void VersionGraph::addNode(std::string name, std::string changeFunct, float value){
 
     std::function<void(Image&, float)> func = getAlgorithm(changeFunct);
@@ -162,8 +169,6 @@ Image VersionGraph::constructCurrImage(){
         unique_functs[i](result, unique_functs_values[i]);
     }
 
-    preview = downscaling_function_(result, preview_width, preview_height);
-    preview_before_slider = preview;
     return result;
 }
 
@@ -230,6 +235,8 @@ Image VersionGraph::constructExportImage(){
 void VersionGraph::setPreviewDimensions(int w){
     preview_width = w;
     preview_height = w/aspect_ratio;
+    preview_before_slider = downscaling_function_(root_image, preview_width, preview_height);
+    preview = preview_before_slider;
 }
 
 

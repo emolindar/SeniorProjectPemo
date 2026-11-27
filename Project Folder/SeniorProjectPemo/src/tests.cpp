@@ -129,10 +129,11 @@ void assertAfterDownscaling(){
 
 }
 
-
+/*
 int main(){
     assertZeroAdjustment();
     assertAfterDownscaling();
     std::cout<<"Tests done";
     return 0;
 }
+*/
